@@ -1,15 +1,23 @@
+/**
+ * 业绩对标 Pinia Store
+ * 管理业绩对标的全局状态，提供加载、创建、更新、删除等操作
+ */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { BenchmarkDTO, BenchmarkCreateDTO, BenchmarkUpdateDTO } from '@/types/benchmark'
 import * as benchmarkApi from '@/api/benchmark'
 
 export const useBenchmarkStore = defineStore('benchmark', () => {
+  /** 业绩对标列表 */
   const benchmarks = ref<BenchmarkDTO[]>([])
+  /** 加载状态 */
   const loading = ref(false)
+  /** 错误信息 */
   const error = ref<string | null>(null)
 
   /**
    * 加载所有业绩对标
+   * @param configurationTypeId - 可选，按配置类型ID筛选
    */
   const loadBenchmarks = async (configurationTypeId?: number) => {
     loading.value = true
@@ -26,6 +34,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
 
   /**
    * 根据配置类型ID加载业绩对标
+   * @param configurationTypeId - 配置类型ID
    */
   const loadByConfigurationTypeId = async (configurationTypeId: number) => {
     loading.value = true
@@ -44,6 +53,8 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
 
   /**
    * 根据ID获取业绩对标
+   * @param id - 业绩对标ID
+   * @returns 业绩对标详情
    */
   const getById = async (id: number) => {
     try {
@@ -56,6 +67,8 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
 
   /**
    * 创建业绩对标
+   * @param data - 创建业绩对标请求体
+   * @returns 新创建的业绩对标
    */
   const create = async (data: BenchmarkCreateDTO) => {
     try {
@@ -70,6 +83,9 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
 
   /**
    * 更新业绩对标
+   * @param id - 业绩对标ID
+   * @param data - 更新业绩对标请求体
+   * @returns 更新后的业绩对标
    */
   const update = async (id: number, data: BenchmarkUpdateDTO) => {
     try {
@@ -87,6 +103,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
 
   /**
    * 删除业绩对标
+   * @param id - 业绩对标ID
    */
   const remove = async (id: number) => {
     try {

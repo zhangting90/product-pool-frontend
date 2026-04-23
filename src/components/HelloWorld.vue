@@ -1,13 +1,17 @@
+<!-- Vite + Vue 默认欢迎页面组件 -->
 <script setup lang="ts">
 import { ref } from 'vue'
+// 导入静态资源图片
 import viteLogo from '../assets/vite.svg'
 import heroImg from '../assets/hero.png'
 import vueLogo from '../assets/vue.svg'
 
+// 计数器状态
 const count = ref(0)
 </script>
 
 <template>
+  <!-- 首屏展示区域 -->
   <section id="center">
     <div class="hero">
       <img :src="heroImg" class="base" width="170" height="179" alt="" />
@@ -18,12 +22,15 @@ const count = ref(0)
       <h1>Get started</h1>
       <p>Edit <code>src/App.vue</code> and save to test <code>HMR</code></p>
     </div>
+    <!-- 计数器按钮 -->
     <button class="counter" @click="count++">Count is {{ count }}</button>
   </section>
 
   <div class="ticks"></div>
 
+  <!-- 文档链接和社区链接区域 -->
   <section id="next-steps">
+    <!-- 文档入口 -->
     <div id="docs">
       <svg class="icon" role="presentation" aria-hidden="true">
         <use href="/icons.svg#documentation-icon"></use>
@@ -45,6 +52,7 @@ const count = ref(0)
         </li>
       </ul>
     </div>
+    <!-- 社区入口 -->
     <div id="social">
       <svg class="icon" role="presentation" aria-hidden="true">
         <use href="/icons.svg#social-icon"></use>

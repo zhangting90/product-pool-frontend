@@ -1,8 +1,11 @@
+<!-- 策略类型管理页面：按业绩对标筛选，表格展示策略类型列表 -->
 <template>
   <div class="strategy-type-list">
+    <!-- 页面头部：标题、业绩对标筛选和操作按钮 -->
     <div class="header">
       <h2>策略类型管理</h2>
       <div class="header-actions">
+        <!-- 业绩对标筛选下拉框 -->
         <el-select
           v-model="selectedBenchmark"
           placeholder="选择业绩对标"
@@ -28,6 +31,7 @@
       </div>
     </div>
 
+    <!-- 策略类型数据表格 -->
     <Table
       :data="strategyTypes"
       :loading="loading"
@@ -38,6 +42,7 @@
       <el-table-column label="业绩对标" prop="benchmarkName" sortable="custom" />
       <el-table-column label="描述" prop="description" show-overflow-tooltip />
       <el-table-column label="排序" prop="sortOrder" sortable="custom" width="100" />
+      <!-- 操作列：编辑、删除、上移、下移 -->
       <el-table-column label="操作" width="240" fixed="right">
         <template #default="{ row }">
           <el-button size="small" @click="handleEdit(row)">编辑</el-button>
@@ -88,25 +93,31 @@ import Table from '@/components/common/Table.vue'
 import StrategyTypeDialog from './StrategyTypeDialog.vue'
 import type { StrategyTypeDTO } from '@/types/strategy-type'
 
+// 初始化store和工具函数
 const benchmarkStore = useBenchmarkStore()
 const strategyTypeStore = useStrategyTypeStore()
 const { success, error: showError } = useMessage()
 const { confirmDelete } = useConfirm()
 
+// 计算属性：业绩对标列表、策略类型列表、加载状态
 const benchmarks = computed(() => benchmarkStore.benchmarks)
 const strategyTypes = computed(() => strategyTypeStore.strategyTypes)
 const loading = computed(() => strategyTypeStore.loading)
 
+// 当前选中的业绩对标ID
 const selectedBenchmark = ref<number>()
+// 对话框相关状态
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const isEdit = ref(false)
 const formData = ref<Partial<StrategyTypeDTO>>({})
 
+// 页面挂载时加载业绩对标数据
 onMounted(() => {
   loadBenchmarks()
 })
 
+// 加载业绩对标列表
 const loadBenchmarks = async () => {
   try {
     await benchmarkStore.loadBenchmarks()
@@ -115,6 +126,7 @@ const loadBenchmarks = async () => {
   }
 }
 
+// 业绩对标筛选变化处理
 const handleBenchmarkChange = () => {
   if (selectedBenchmark.value) {
     loadStrategyTypes()
@@ -123,6 +135,7 @@ const handleBenchmarkChange = () => {
   }
 }
 
+// 按业绩对标加载策略类型
 const loadStrategyTypes = async () => {
   if (!selectedBenchmark.value) return
   try {
@@ -132,6 +145,7 @@ const loadStrategyTypes = async () => {
   }
 }
 
+// 加载所有策略类型
 const loadAllStrategyTypes = async () => {
   try {
     await strategyTypeStore.loadStrategyTypes()
@@ -140,6 +154,7 @@ const loadAllStrategyTypes = async () => {
   }
 }
 
+// 刷新数据
 const handleRefresh = () => {
   if (selectedBenchmark.value) {
     loadStrategyTypes()
@@ -148,6 +163,7 @@ const handleRefresh = () => {
   }
 }
 
+// 新增策略类型
 const handleAdd = () => {
   isEdit.value = false
   dialogTitle.value = '新增策略类型'
@@ -158,6 +174,7 @@ const handleAdd = () => {
   dialogVisible.value = true
 }
 
+// 编辑策略类型
 const handleEdit = (data: StrategyTypeDTO) => {
   isEdit.value = true
   dialogTitle.value = '编辑策略类型'
@@ -165,6 +182,7 @@ const handleEdit = (data: StrategyTypeDTO) => {
   dialogVisible.value = true
 }
 
+// 删除策略类型（需确认）
 const handleDelete = async (data: StrategyTypeDTO) => {
   if (await confirmDelete(`确定要删除 "${data.name}" 吗？`)) {
     try {
@@ -176,6 +194,7 @@ const handleDelete = async (data: StrategyTypeDTO) => {
   }
 }
 
+// 对话框确认提交（新增或编辑）
 const handleConfirm = async () => {
   try {
     if (isEdit.value) {
@@ -200,20 +219,24 @@ const handleConfirm = async () => {
   }
 }
 
+// 排序变化处理
 const handleSortChange = () => {
   // 排序变化处理
 }
 
+// 判断是否可以上移
 const canMoveUp = (data: StrategyTypeDTO) => {
   const index = strategyTypes.value.findIndex(st => st.id === data.id)
   return index > 0
 }
 
+// 判断是否可以下移
 const canMoveDown = (data: StrategyTypeDTO) => {
   const index = strategyTypes.value.findIndex(st => st.id === data.id)
   return index < strategyTypes.value.length - 1
 }
 
+// 上移排序
 const handleMoveUp = async (data: StrategyTypeDTO) => {
   if (canMoveUp(data)) {
     try {
@@ -228,6 +251,7 @@ const handleMoveUp = async (data: StrategyTypeDTO) => {
   }
 }
 
+// 下移排序
 const handleMoveDown = async (data: StrategyTypeDTO) => {
   if (canMoveDown(data)) {
     try {

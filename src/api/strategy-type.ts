@@ -1,8 +1,14 @@
+/**
+ * 策略类型 API 模块
+ * 提供策略类型的增删改查接口，支持按业绩对标筛选
+ */
 import request from '@/utils/request'
 import type { StrategyTypeDTO, StrategyTypeCreateDTO, StrategyTypeUpdateDTO } from '@/types/strategy-type'
 
 /**
  * 获取所有策略类型
+ * @param benchmarkId - 可选，按业绩对标ID筛选
+ * @returns 策略类型列表
  */
 export const getStrategyTypes = (benchmarkId?: number) => {
   return request<StrategyTypeDTO[]>({
@@ -14,6 +20,8 @@ export const getStrategyTypes = (benchmarkId?: number) => {
 
 /**
  * 根据ID获取策略类型
+ * @param id - 策略类型ID
+ * @returns 策略类型详情
  */
 export const getStrategyTypeById = (id: number) => {
   return request<StrategyTypeDTO>({
@@ -24,6 +32,8 @@ export const getStrategyTypeById = (id: number) => {
 
 /**
  * 根据业绩对标ID获取策略类型
+ * @param benchmarkId - 业绩对标ID
+ * @returns 策略类型列表
  */
 export const getStrategyTypesByBenchmarkId = (benchmarkId: number) => {
   return request<StrategyTypeDTO[]>({
@@ -34,6 +44,8 @@ export const getStrategyTypesByBenchmarkId = (benchmarkId: number) => {
 
 /**
  * 创建策略类型
+ * @param data - 创建策略类型请求体
+ * @returns 新创建的策略类型
  */
 export const createStrategyType = (data: StrategyTypeCreateDTO) => {
   return request<StrategyTypeDTO>({
@@ -45,6 +57,9 @@ export const createStrategyType = (data: StrategyTypeCreateDTO) => {
 
 /**
  * 更新策略类型
+ * @param id - 策略类型ID
+ * @param data - 更新策略类型请求体
+ * @returns 更新后的策略类型
  */
 export const updateStrategyType = (id: number, data: StrategyTypeUpdateDTO) => {
   return request<StrategyTypeDTO>({
@@ -56,6 +71,7 @@ export const updateStrategyType = (id: number, data: StrategyTypeUpdateDTO) => {
 
 /**
  * 删除策略类型
+ * @param id - 策略类型ID
  */
 export const deleteStrategyType = (id: number) => {
   return request({

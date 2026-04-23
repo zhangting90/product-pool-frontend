@@ -1,8 +1,14 @@
+/**
+ * 产品 API 模块
+ * 提供产品的增删改查接口，支持分页查询、搜索和按策略类型筛选
+ */
 import request from '@/utils/request'
 import type { ProductDTO, ProductCreateDTO, ProductUpdateDTO, PageResult } from '@/types/product'
 
 /**
  * 获取产品列表（分页）
+ * @param params - 分页和排序参数
+ * @returns 分页产品列表
  */
 export const getProducts = (params: {
   page?: number
@@ -19,6 +25,8 @@ export const getProducts = (params: {
 
 /**
  * 搜索产品（分页）
+ * @param params - 搜索条件和分页参数
+ * @returns 分页产品列表
  */
 export const searchProducts = (params: {
   name?: string
@@ -38,6 +46,8 @@ export const searchProducts = (params: {
 
 /**
  * 根据ID获取产品
+ * @param id - 产品ID
+ * @returns 产品详情
  */
 export const getProductById = (id: number) => {
   return request<ProductDTO>({
@@ -48,6 +58,9 @@ export const getProductById = (id: number) => {
 
 /**
  * 根据策略类型ID获取产品（分页）
+ * @param strategyTypeId - 策略类型ID
+ * @param params - 分页参数
+ * @returns 分页产品列表
  */
 export const getProductsByStrategyTypeId = (strategyTypeId: number, params: {
   page?: number
@@ -62,6 +75,8 @@ export const getProductsByStrategyTypeId = (strategyTypeId: number, params: {
 
 /**
  * 获取激活的产品（分页）
+ * @param params - 分页参数
+ * @returns 分页的激活产品列表
  */
 export const getActiveProducts = (params: {
   page?: number
@@ -76,6 +91,8 @@ export const getActiveProducts = (params: {
 
 /**
  * 创建产品
+ * @param data - 创建产品请求体
+ * @returns 新创建的产品
  */
 export const createProduct = (data: ProductCreateDTO) => {
   return request<ProductDTO>({
@@ -87,6 +104,9 @@ export const createProduct = (data: ProductCreateDTO) => {
 
 /**
  * 更新产品
+ * @param id - 产品ID
+ * @param data - 更新产品请求体
+ * @returns 更新后的产品
  */
 export const updateProduct = (id: number, data: ProductUpdateDTO) => {
   return request<ProductDTO>({
@@ -98,6 +118,7 @@ export const updateProduct = (id: number, data: ProductUpdateDTO) => {
 
 /**
  * 删除产品
+ * @param id - 产品ID
  */
 export const deleteProduct = (id: number) => {
   return request({

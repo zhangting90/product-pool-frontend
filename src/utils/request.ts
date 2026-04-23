@@ -1,7 +1,11 @@
+/**
+ * Axios 请求封装
+ * 基于axios创建统一请求实例，包含请求/响应拦截器、Token注入、错误统一处理
+ */
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-// 创建axios实例
+/** axios请求实例，配置基础URL、超时时间和默认请求头 */
 const request: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
   timeout: import.meta.env.VITE_API_TIMEOUT ? Number(import.meta.env.VITE_API_TIMEOUT) : 30000,
@@ -10,10 +14,10 @@ const request: AxiosInstance = axios.create({
   }
 })
 
-// 请求拦截器
+/** 请求拦截器：自动注入Bearer Token */
 request.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // 从localStorage获取token
+    // 从localStorage获取token并添加到请求头
     const token = localStorage.getItem('token')
     if (token && config.headers) {
       config.headers['Authorization'] = `Bearer ${token}`
@@ -26,25 +30,27 @@ request.interceptors.request.use(
   }
 )
 
-// 响应拦截器
+/** 响应拦截器：统一处理业务码和HTTP错误 */
 request.interceptors.response.use(
   (response: AxiosResponse) => {
     const { code, message, data } = response.data
 
-    // 根据后端返回的code进行判断
+    // 业务码为200时返回数据，否则提示错误
     if (code === 200) {
       return data
     } else {
-      // 业务错误
+      // 业务错误提示
       ElMessage.error(message || '请求失败')
       return Promise.reject(new Error(message || '请求失败'))
     }
   },
   (error: AxiosError) => {
+    // HTTP状态码错误处理
     if (error.response) {
       const { status } = error.response
 
       switch (status) {
+        // 401未授权：提示重新登录
         case 401:
           ElMessageBox.confirm('登录状态已过期，请重新登录', '提示', {
             confirmButtonText: '重新登录',
@@ -55,12 +61,15 @@ request.interceptors.response.use(
             window.location.href = '/login'
           })
           break
+        // 403禁止访问
         case 403:
           ElMessage.error('没有权限访问')
           break
+        // 404资源不存在
         case 404:
           ElMessage.error('请求的资源不存在')
           break
+        // 500服务器内部错误
         case 500:
           ElMessage.error('服务器错误')
           break
@@ -68,8 +77,10 @@ request.interceptors.response.use(
           ElMessage.error(error.message || '请求失败')
       }
     } else if (error.request) {
+      // 请求已发出但未收到响应
       ElMessage.error('网络错误，请检查网络连接')
     } else {
+      // 请求配置异常
       ElMessage.error('请求配置错误')
     }
 

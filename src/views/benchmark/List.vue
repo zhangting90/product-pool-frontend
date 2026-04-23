@@ -1,8 +1,11 @@
+<!-- 业绩对标管理页面：按配置类型筛选，表格展示业绩对标列表 -->
 <template>
   <div class="benchmark-list">
+    <!-- 页面头部：标题、配置类型筛选和操作按钮 -->
     <div class="header">
       <h2>业绩对标管理</h2>
       <div class="header-actions">
+        <!-- 配置类型筛选下拉框 -->
         <el-select
           v-model="selectedConfigurationType"
           placeholder="选择配置类型"
@@ -28,6 +31,7 @@
       </div>
     </div>
 
+    <!-- 业绩对标数据表格 -->
     <Table
       :data="benchmarks"
       :loading="loading"
@@ -39,6 +43,7 @@
       <el-table-column label="配置类型" prop="configurationTypeName" sortable="custom" />
       <el-table-column label="描述" prop="description" show-overflow-tooltip />
       <el-table-column label="排序" prop="sortOrder" sortable="custom" width="100" />
+      <!-- 操作列：编辑、删除、上移、下移 -->
       <el-table-column label="操作" width="240" fixed="right">
         <template #default="{ row }">
           <el-button size="small" @click="handleEdit(row)">编辑</el-button>
@@ -89,25 +94,31 @@ import Table from '@/components/common/Table.vue'
 import BenchmarkDialog from './BenchmarkDialog.vue'
 import type { BenchmarkDTO } from '@/types/benchmark'
 
+// 初始化store和工具函数
 const configurationTypeStore = useConfigurationTypeStore()
 const benchmarkStore = useBenchmarkStore()
 const { success, error: showError } = useMessage()
 const { confirmDelete } = useConfirm()
 
+// 计算属性：配置类型列表、业绩对标列表、加载状态
 const configurationTypes = computed(() => configurationTypeStore.majorTypes)
 const benchmarks = computed(() => benchmarkStore.benchmarks)
 const loading = computed(() => benchmarkStore.loading)
 
+// 当前选中的配置类型ID
 const selectedConfigurationType = ref<number>()
+// 对话框相关状态
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const isEdit = ref(false)
 const formData = ref<Partial<BenchmarkDTO>>({})
 
+// 页面挂载时加载配置类型数据
 onMounted(() => {
   loadConfigurationTypes()
 })
 
+// 加载配置类型（大分类）列表
 const loadConfigurationTypes = async () => {
   try {
     await configurationTypeStore.loadMajorTypes()
@@ -116,6 +127,7 @@ const loadConfigurationTypes = async () => {
   }
 }
 
+// 配置类型筛选变化处理
 const handleConfigurationTypeChange = () => {
   if (selectedConfigurationType.value) {
     loadBenchmarks()
@@ -124,6 +136,7 @@ const handleConfigurationTypeChange = () => {
   }
 }
 
+// 按配置类型加载业绩对标
 const loadBenchmarks = async () => {
   if (!selectedConfigurationType.value) return
   try {
@@ -133,6 +146,7 @@ const loadBenchmarks = async () => {
   }
 }
 
+// 加载所有业绩对标
 const loadAllBenchmarks = async () => {
   try {
     await benchmarkStore.loadBenchmarks()
@@ -141,6 +155,7 @@ const loadAllBenchmarks = async () => {
   }
 }
 
+// 刷新数据
 const handleRefresh = () => {
   if (selectedConfigurationType.value) {
     loadBenchmarks()
@@ -149,6 +164,7 @@ const handleRefresh = () => {
   }
 }
 
+// 新增业绩对标
 const handleAdd = () => {
   isEdit.value = false
   dialogTitle.value = '新增业绩对标'
@@ -159,6 +175,7 @@ const handleAdd = () => {
   dialogVisible.value = true
 }
 
+// 编辑业绩对标
 const handleEdit = (data: BenchmarkDTO) => {
   isEdit.value = true
   dialogTitle.value = '编辑业绩对标'
@@ -166,6 +183,7 @@ const handleEdit = (data: BenchmarkDTO) => {
   dialogVisible.value = true
 }
 
+// 删除业绩对标（需确认）
 const handleDelete = async (data: BenchmarkDTO) => {
   if (await confirmDelete(`确定要删除 "${data.name}" 吗？`)) {
     try {
@@ -177,6 +195,7 @@ const handleDelete = async (data: BenchmarkDTO) => {
   }
 }
 
+// 对话框确认提交（新增或编辑）
 const handleConfirm = async () => {
   try {
     if (isEdit.value) {
@@ -202,20 +221,24 @@ const handleConfirm = async () => {
   }
 }
 
+// 排序变化处理
 const handleSortChange = () => {
   // 排序变化处理
 }
 
+// 判断是否可以上移
 const canMoveUp = (data: BenchmarkDTO) => {
   const index = benchmarks.value.findIndex(b => b.id === data.id)
   return index > 0
 }
 
+// 判断是否可以下移
 const canMoveDown = (data: BenchmarkDTO) => {
   const index = benchmarks.value.findIndex(b => b.id === data.id)
   return index < benchmarks.value.length - 1
 }
 
+// 上移排序
 const handleMoveUp = async (data: BenchmarkDTO) => {
   if (canMoveUp(data)) {
     try {
@@ -230,6 +253,7 @@ const handleMoveUp = async (data: BenchmarkDTO) => {
   }
 }
 
+// 下移排序
 const handleMoveDown = async (data: BenchmarkDTO) => {
   if (canMoveDown(data)) {
     try {

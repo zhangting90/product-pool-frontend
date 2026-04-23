@@ -1,14 +1,18 @@
+<!-- 产品池展示页面：层级展示产品池数据，支持自动刷新 -->
 <template>
   <div class="product-pool-container">
+    <!-- 页面头部：标题和刷新控制 -->
     <div class="page-header">
       <h2>产品池展示</h2>
       <div class="header-actions">
+        <!-- 自动刷新开关 -->
         <el-switch
           v-model="autoRefresh"
           active-text="自动刷新"
           inactive-text="手动刷新"
           @change="handleAutoRefreshChange"
         />
+        <!-- 刷新间隔选择 -->
         <el-select
           v-model="refreshInterval"
           :disabled="!autoRefresh"
@@ -20,25 +24,29 @@
           <el-option label="5分钟" :value="300" />
           <el-option label="10分钟" :value="600" />
         </el-select>
+        <!-- 手动刷新按钮 -->
         <el-button type="primary" :icon="Refresh" @click="handleRefresh" :loading="loading">
           刷新
         </el-button>
       </div>
     </div>
 
+    <!-- 骨架屏加载效果 -->
     <el-skeleton :loading="loading" :rows="5" animated>
       <template #default>
+        <!-- 空数据提示 -->
         <div v-if="productPool.length === 0" class="empty-state">
           <el-empty description="暂无产品池数据" />
         </div>
+        <!-- 产品池层级数据展示 -->
         <div v-else class="product-pool-content">
-          <!-- 大分类 -->
+          <!-- 大分类层级 -->
           <div v-for="majorType in productPool" :key="majorType.configurationTypeId" class="major-type-section">
             <div class="section-title">
               <h3>{{ majorType.configurationTypeName }}</h3>
             </div>
 
-            <!-- 子分类 -->
+            <!-- 子分类层级 -->
             <div v-if="majorType.children && majorType.children.length > 0" class="sub-types-container">
               <div
                 v-for="subType in majorType.children"
@@ -49,7 +57,7 @@
                   <h4>{{ subType.name }}</h4>
                 </div>
 
-                <!-- 业绩对标 -->
+                <!-- 业绩对标层级 -->
                 <div v-if="subType.benchmarks && subType.benchmarks.length > 0" class="benchmarks-container">
                   <div
                     v-for="benchmark in subType.benchmarks"
@@ -60,7 +68,7 @@
                       <span class="benchmark-name">{{ benchmark.name }}</span>
                     </div>
 
-                    <!-- 策略类型 -->
+                    <!-- 策略类型层级 -->
                     <div v-if="benchmark.strategyTypes && benchmark.strategyTypes.length > 0" class="strategy-types-container">
                       <div
                         v-for="strategyType in benchmark.strategyTypes"
@@ -74,7 +82,7 @@
                           </span>
                         </div>
 
-                        <!-- 产品列表 -->
+                        <!-- 产品卡片网格 -->
                         <div v-if="strategyType.products && strategyType.products.length > 0" class="products-grid">
                           <div
                             v-for="product in strategyType.products"
@@ -87,6 +95,7 @@
                                 {{ product.riskLevel }}
                               </el-tag>
                             </div>
+                            <!-- 产品详细信息 -->
                             <div class="product-info">
                               <div class="info-item">
                                 <span class="info-label">代码：</span>
@@ -117,6 +126,7 @@
                                 <span class="info-value">{{ formatNumber(product.fundScale) }} 亿</span>
                               </div>
                             </div>
+                            <!-- 产品描述 -->
                             <div v-if="product.description" class="product-description">
                               {{ product.description }}
                             </div>
@@ -154,7 +164,10 @@ import { Refresh } from '@element-plus/icons-vue'
 import { useProductPoolStore } from '@/stores/product-pool'
 import type { ProductPoolVO } from '@/types/product-pool'
 
+// 初始化产品池store
 const productPoolStore = useProductPoolStore()
+
+// 响应式状态
 const productPool = ref<ProductPoolVO[]>([])
 const loading = ref(false)
 const autoRefresh = ref(false)
@@ -196,7 +209,7 @@ const handleIntervalChange = () => {
   }
 }
 
-// 启动自动刷新
+// 启动自动刷新定时器
 const startAutoRefresh = () => {
   if (timer) {
     clearInterval(timer)
@@ -206,7 +219,7 @@ const startAutoRefresh = () => {
   }, refreshInterval.value * 1000)
 }
 
-// 停止自动刷新
+// 停止自动刷新定时器
 const stopAutoRefresh = () => {
   if (timer) {
     clearInterval(timer)
@@ -219,7 +232,7 @@ const formatPercent = (value: number) => {
   return `${(value * 100).toFixed(2)}%`
 }
 
-// 格式化数字
+// 格式化数字（保留两位小数）
 const formatNumber = (value: number) => {
   return value.toFixed(2)
 }
@@ -236,6 +249,7 @@ const getRiskLevelType = (riskLevel: string) => {
   return riskMap[riskLevel] || 'info'
 }
 
+// 页面挂载时加载数据并恢复本地存储的刷新设置
 onMounted(() => {
   loadProductPool()
   // 检查本地存储的自动刷新设置
@@ -265,6 +279,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 产品池容器样式 */
 .product-pool-container {
   max-width: 1600px;
   margin: 0 auto;
@@ -294,12 +309,14 @@ onUnmounted(() => {
   padding: 60px 0;
 }
 
+/* 产品池内容层级布局 */
 .product-pool-content {
   display: flex;
   flex-direction: column;
   gap: 32px;
 }
 
+/* 大分类区域样式 */
 .major-type-section {
   background: #fff;
   border-radius: 8px;
@@ -316,6 +333,7 @@ onUnmounted(() => {
   border-bottom: 2px solid #667eea;
 }
 
+/* 子分类容器样式 */
 .sub-types-container {
   display: flex;
   flex-direction: column;
@@ -335,6 +353,7 @@ onUnmounted(() => {
   color: #333;
 }
 
+/* 业绩对标区域样式 */
 .benchmarks-container {
   display: flex;
   flex-direction: column;
@@ -358,6 +377,7 @@ onUnmounted(() => {
   color: #667eea;
 }
 
+/* 策略类型网格布局 */
 .strategy-types-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -385,12 +405,14 @@ onUnmounted(() => {
   font-size: 14px;
 }
 
+/* 产品卡片网格布局 */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
 }
 
+/* 产品卡片样式 */
 .product-card {
   background: #fff;
   border-radius: 6px;
@@ -399,6 +421,7 @@ onUnmounted(() => {
   transition: all 0.3s;
 }
 
+/* 产品卡片悬停效果 */
 .product-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
@@ -420,6 +443,7 @@ onUnmounted(() => {
   margin-right: 8px;
 }
 
+/* 产品信息列表样式 */
 .product-info {
   display: flex;
   flex-direction: column;
@@ -442,6 +466,7 @@ onUnmounted(() => {
   font-weight: 500;
 }
 
+/* 产品描述样式 */
 .product-description {
   font-size: 13px;
   color: #666;
@@ -450,6 +475,7 @@ onUnmounted(() => {
   border-top: 1px solid #f0f0f0;
 }
 
+/* 空状态占位样式 */
 .empty-products,
 .empty-strategy-types,
 .empty-benchmarks,

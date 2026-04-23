@@ -1,8 +1,11 @@
+<!-- 产品管理页面：按策略类型筛选，支持搜索、分页，表格展示产品列表 -->
 <template>
   <div class="product-list">
+    <!-- 页面头部：标题、策略类型筛选和操作按钮 -->
     <div class="header">
       <h2>产品管理</h2>
       <div class="header-actions">
+        <!-- 策略类型筛选下拉框 -->
         <el-select
           v-model="selectedStrategyType"
           placeholder="选择策略类型"
@@ -28,6 +31,7 @@
       </div>
     </div>
 
+    <!-- 搜索栏：产品名称、代码、风险等级、状态筛选 -->
     <div class="search-bar">
       <el-input
         v-model="searchForm.name"
@@ -70,6 +74,7 @@
       <el-button @click="handleReset">重置</el-button>
     </div>
 
+    <!-- 产品数据表格（带分页） -->
     <Table
       :data="products"
       :loading="loading"
@@ -82,6 +87,7 @@
       <el-table-column label="名称" prop="name" sortable="custom" />
       <el-table-column label="代码" prop="code" sortable="custom" width="150" />
       <el-table-column label="策略类型" prop="strategyTypeName" sortable="custom" />
+      <!-- 风险等级列，使用标签展示 -->
       <el-table-column label="风险等级" prop="riskLevel" sortable="custom" width="120">
         <template #default="{ row }">
           <el-tag :type="getRiskTagType(row.riskLevel)">
@@ -89,23 +95,27 @@
           </el-tag>
         </template>
       </el-table-column>
+      <!-- 年化收益率列，格式化为百分比 -->
       <el-table-column label="年化收益率" prop="annualReturn" sortable="custom" width="120">
         <template #default="{ row }">
           {{ formatPercent(row.annualReturn) }}
         </template>
       </el-table-column>
+      <!-- 波动率列，格式化为百分比 -->
       <el-table-column label="波动率" prop="volatility" sortable="custom" width="120">
         <template #default="{ row }">
           {{ formatPercent(row.volatility) }}
         </template>
       </el-table-column>
       <el-table-column label="夏普比率" prop="sharpeRatio" sortable="custom" width="120" />
+      <!-- 最大回撤列，格式化为百分比 -->
       <el-table-column label="最大回撤" prop="maxDrawdown" sortable="custom" width="120">
         <template #default="{ row }">
           {{ formatPercent(row.maxDrawdown) }}
         </template>
       </el-table-column>
       <el-table-column label="基金经理" prop="fundManager" width="120" />
+      <!-- 状态列，使用标签展示激活/停用 -->
       <el-table-column label="状态" prop="isActive" sortable="custom" width="100">
         <template #default="{ row }">
           <el-tag :type="row.isActive ? 'success' : 'info'">
@@ -114,6 +124,7 @@
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="sortOrder" sortable="custom" width="100" />
+      <!-- 操作列：编辑、删除、上移、下移 -->
       <el-table-column label="操作" width="280" fixed="right">
         <template #default="{ row }">
           <el-button size="small" @click="handleEdit(row)">编辑</el-button>
@@ -164,34 +175,42 @@ import Table from '@/components/common/Table.vue'
 import ProductDialog from './ProductDialog.vue'
 import type { ProductDTO } from '@/types/product'
 
+// 初始化store和工具函数
 const strategyTypeStore = useStrategyTypeStore()
 const productStore = useProductStore()
 const { success, error: showError } = useMessage()
 const { confirmDelete } = useConfirm()
 
+// 计算属性：策略类型列表、产品列表、加载状态、总数
 const strategyTypes = computed(() => strategyTypeStore.strategyTypes)
 const products = computed(() => productStore.products)
 const loading = computed(() => productStore.loading)
 const total = computed(() => productStore.pageResult.totalElements)
 
+// 当前选中的策略类型ID
 const selectedStrategyType = ref<number>()
+// 分页状态
 const currentPage = ref(1)
 const pageSize = ref(10)
+// 搜索表单
 const searchForm = ref({
   name: '',
   code: '',
   riskLevel: '',
   isActive: undefined as boolean | undefined,
 })
+// 对话框相关状态
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const isEdit = ref(false)
 const formData = ref<Partial<ProductDTO>>({})
 
+// 页面挂载时加载策略类型数据
 onMounted(() => {
   loadStrategyTypes()
 })
 
+// 加载策略类型列表
 const loadStrategyTypes = async () => {
   try {
     await strategyTypeStore.loadStrategyTypes()
@@ -200,6 +219,7 @@ const loadStrategyTypes = async () => {
   }
 }
 
+// 策略类型筛选变化处理
 const handleStrategyTypeChange = () => {
   if (selectedStrategyType.value) {
     loadProducts()
@@ -208,6 +228,7 @@ const handleStrategyTypeChange = () => {
   }
 }
 
+// 按策略类型加载产品列表
 const loadProducts = async () => {
   if (!selectedStrategyType.value) return
   try {
@@ -220,6 +241,7 @@ const loadProducts = async () => {
   }
 }
 
+// 按条件搜索产品
 const searchProducts = async () => {
   try {
     await productStore.searchProducts({
@@ -232,11 +254,13 @@ const searchProducts = async () => {
   }
 }
 
+// 搜索处理（重置到第一页）
 const handleSearch = () => {
   currentPage.value = 1
   searchProducts()
 }
 
+// 重置搜索条件
 const handleReset = () => {
   searchForm.value = {
     name: '',
@@ -248,6 +272,7 @@ const handleReset = () => {
   searchProducts()
 }
 
+// 刷新数据
 const handleRefresh = () => {
   if (selectedStrategyType.value) {
     loadProducts()
@@ -256,6 +281,7 @@ const handleRefresh = () => {
   }
 }
 
+// 新增产品
 const handleAdd = () => {
   isEdit.value = false
   dialogTitle.value = '新增产品'
@@ -268,6 +294,7 @@ const handleAdd = () => {
   dialogVisible.value = true
 }
 
+// 编辑产品
 const handleEdit = (data: ProductDTO) => {
   isEdit.value = true
   dialogTitle.value = '编辑产品'
@@ -275,6 +302,7 @@ const handleEdit = (data: ProductDTO) => {
   dialogVisible.value = true
 }
 
+// 删除产品（需确认）
 const handleDelete = async (data: ProductDTO) => {
   if (await confirmDelete(`确定要删除 "${data.name}" 吗？`)) {
     try {
@@ -286,6 +314,7 @@ const handleDelete = async (data: ProductDTO) => {
   }
 }
 
+// 对话框确认提交（新增或编辑）
 const handleConfirm = async () => {
   try {
     if (isEdit.value) {
@@ -329,10 +358,12 @@ const handleConfirm = async () => {
   }
 }
 
+// 排序变化处理
 const handleSortChange = () => {
   // 排序变化处理
 }
 
+// 根据风险等级获取标签类型
 const getRiskTagType = (level: string) => {
   const map: Record<string, any> = {
     '低风险': 'success',
@@ -344,21 +375,25 @@ const getRiskTagType = (level: string) => {
   return map[level] || 'info'
 }
 
+// 格式化百分比（小数转百分数字符串）
 const formatPercent = (value?: number) => {
   if (value === undefined || value === null) return '-'
   return `${(value * 100).toFixed(2)}%`
 }
 
+// 判断是否可以上移
 const canMoveUp = (data: ProductDTO) => {
   const index = products.value.findIndex(p => p.id === data.id)
   return index > 0
 }
 
+// 判断是否可以下移
 const canMoveDown = (data: ProductDTO) => {
   const index = products.value.findIndex(p => p.id === data.id)
   return index < products.value.length - 1
 }
 
+// 上移排序
 const handleMoveUp = async (data: ProductDTO) => {
   if (canMoveUp(data)) {
     try {
@@ -374,6 +409,7 @@ const handleMoveUp = async (data: ProductDTO) => {
   }
 }
 
+// 下移排序
 const handleMoveDown = async (data: ProductDTO) => {
   if (canMoveDown(data)) {
     try {
@@ -413,6 +449,7 @@ const handleMoveDown = async (data: ProductDTO) => {
   gap: 10px;
 }
 
+/* 搜索栏样式 */
 .search-bar {
   display: flex;
   gap: 10px;
