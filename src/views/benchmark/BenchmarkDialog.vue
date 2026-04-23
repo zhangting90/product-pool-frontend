@@ -25,32 +25,18 @@
         style="width: 100%"
         :disabled="isEdit"
       >
-        <el-option
-          v-for="ct in configurationTypes"
-          :key="ct.id"
-          :label="ct.name"
-          :value="ct.id"
-        />
+        <el-option v-for="ct in configurationTypes" :key="ct.id" :label="ct.name" :value="ct.id" />
       </el-select>
     </el-form-item>
 
     <!-- 描述信息 -->
     <el-form-item label="描述">
-      <el-input
-        v-model="formData.description"
-        type="textarea"
-        :rows="3"
-        placeholder="请输入描述"
-      />
+      <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入描述" />
     </el-form-item>
 
     <!-- 排序号 -->
     <el-form-item label="排序">
-      <el-input-number
-        v-model="formData.sortOrder"
-        :min="0"
-        :step="1"
-      />
+      <el-input-number v-model="formData.sortOrder" :min="0" :step="1" />
     </el-form-item>
   </FormDialog>
 </template>
@@ -63,16 +49,16 @@ import type { BenchmarkDTO } from '@/types/benchmark'
 
 // 组件属性和事件定义
 interface Props {
-  visible: boolean                  // 是否显示对话框
+  visible: boolean // 是否显示对话框
   modelValue: Partial<BenchmarkDTO> // 表单数据（v-model）
-  title: string                     // 对话框标题
-  isEdit: boolean                   // 是否编辑模式
+  title: string // 对话框标题
+  isEdit: boolean // 是否编辑模式
 }
 
 interface Emits {
   (e: 'update:visible', value: boolean): void
   (e: 'update:modelValue', value: Partial<BenchmarkDTO>): void
-  (e: 'confirm'): void  // 确认提交事件
+  (e: 'confirm'): void // 确认提交事件
 }
 
 const props = defineProps<Props>()
@@ -83,13 +69,13 @@ const configurationTypeStore = useConfigurationTypeStore()
 // 对话框显示状态的双向绑定
 const dialogVisible = computed({
   get: () => props.visible,
-  set: (value) => emit('update:visible', value),
+  set: (value) => emit('update:visible', value)
 })
 
 // 表单数据的双向绑定
 const formData = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
+  set: (value) => emit('update:modelValue', value)
 })
 
 // 配置类型列表（大分类）
@@ -99,9 +85,7 @@ const configurationTypes = computed(() => configurationTypeStore.majorTypes)
 const formRules = {
   name: [{ required: true, message: '请输入业绩对标名称', trigger: 'blur' }],
   code: [{ required: true, message: '请输入业绩对标代码', trigger: 'blur' }],
-  configurationTypeId: [
-    { required: true, message: '请选择配置类型', trigger: 'change' },
-  ],
+  configurationTypeId: [{ required: true, message: '请选择配置类型', trigger: 'change' }]
 }
 
 // 页面挂载时加载配置类型数据

@@ -16,7 +16,7 @@ export function useMessage() {
       message,
       type: 'success',
       duration: 3000,
-      ...options,
+      ...options
     })
   }
 
@@ -30,7 +30,7 @@ export function useMessage() {
       message,
       type: 'warning',
       duration: 3000,
-      ...options,
+      ...options
     })
   }
 
@@ -44,7 +44,7 @@ export function useMessage() {
       message,
       type: 'info',
       duration: 3000,
-      ...options,
+      ...options
     })
   }
 
@@ -58,7 +58,7 @@ export function useMessage() {
       message,
       type: 'error',
       duration: 5000,
-      ...options,
+      ...options
     })
   }
 
@@ -66,6 +66,6 @@ export function useMessage() {
     success,
     warning,
     info,
-    error,
+    error
   }
 }

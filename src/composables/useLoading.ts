@@ -8,10 +8,10 @@ import type { LoadingInstance } from 'element-plus/es/components/loading/src/loa
 
 // 加载选项接口
 interface LoadingOptions {
-  text?: string        // 加载提示文字
-  background?: string  // 遮罩背景色
+  text?: string // 加载提示文字
+  background?: string // 遮罩背景色
   fullscreen?: boolean // 是否全屏
-  lock?: boolean       // 是否锁定滚动
+  lock?: boolean // 是否锁定滚动
 }
 
 // 全局加载实例
@@ -35,7 +35,7 @@ export function useLoading() {
       loadingInstance = ElLoading.service({
         text: options.text || '加载中...',
         background: options.background || 'rgba(0, 0, 0, 0.7)',
-        lock: options.lock !== false,
+        lock: options.lock !== false
       })
     }
   }
@@ -53,7 +53,7 @@ export function useLoading() {
     visible,
     text,
     show,
-    hide,
+    hide
   }
 }
 
@@ -71,7 +71,7 @@ export function useGlobalLoading() {
     loadingInstance = ElLoading.service({
       text: text || '加载中...',
       background: 'rgba(0, 0, 0, 0.7)',
-      lock: true,
+      lock: true
     })
   }
 
@@ -85,6 +85,6 @@ export function useGlobalLoading() {
 
   return {
     show,
-    hide,
+    hide
   }
 }

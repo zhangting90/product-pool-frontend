@@ -4,7 +4,11 @@
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { StrategyTypeDTO, StrategyTypeCreateDTO, StrategyTypeUpdateDTO } from '@/types/strategy-type'
+import type {
+  StrategyTypeDTO,
+  StrategyTypeCreateDTO,
+  StrategyTypeUpdateDTO
+} from '@/types/strategy-type'
 import * as strategyTypeApi from '@/api/strategy-type'
 
 export const useStrategyTypeStore = defineStore('strategyType', () => {
@@ -40,9 +44,7 @@ export const useStrategyTypeStore = defineStore('strategyType', () => {
     loading.value = true
     error.value = null
     try {
-      strategyTypes.value = await strategyTypeApi.getStrategyTypesByBenchmarkId(
-        benchmarkId
-      )
+      strategyTypes.value = await strategyTypeApi.getStrategyTypesByBenchmarkId(benchmarkId)
     } catch (err: any) {
       error.value = err.message || '加载策略类型失败'
       throw err
@@ -90,7 +92,7 @@ export const useStrategyTypeStore = defineStore('strategyType', () => {
   const update = async (id: number, data: StrategyTypeUpdateDTO) => {
     try {
       const result = await strategyTypeApi.updateStrategyType(id, data)
-      const index = strategyTypes.value.findIndex(st => st.id === id)
+      const index = strategyTypes.value.findIndex((st) => st.id === id)
       if (index !== -1) {
         strategyTypes.value[index] = result
       }
@@ -108,7 +110,7 @@ export const useStrategyTypeStore = defineStore('strategyType', () => {
   const remove = async (id: number) => {
     try {
       await strategyTypeApi.deleteStrategyType(id)
-      strategyTypes.value = strategyTypes.value.filter(st => st.id !== id)
+      strategyTypes.value = strategyTypes.value.filter((st) => st.id !== id)
     } catch (err: any) {
       error.value = err.message || '删除策略类型失败'
       throw err

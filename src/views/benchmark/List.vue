@@ -47,25 +47,11 @@
       <el-table-column label="操作" width="240" fixed="right">
         <template #default="{ row }">
           <el-button size="small" @click="handleEdit(row)">编辑</el-button>
-          <el-button
-            size="small"
-            type="danger"
-            @click="handleDelete(row)"
-          >
-            删除
-          </el-button>
-          <el-button
-            size="small"
-            @click="handleMoveUp(row)"
-            :disabled="!canMoveUp(row)"
-          >
+          <el-button size="small" type="danger" @click="handleDelete(row)"> 删除 </el-button>
+          <el-button size="small" @click="handleMoveUp(row)" :disabled="!canMoveUp(row)">
             <el-icon><ArrowUp /></el-icon>
           </el-button>
-          <el-button
-            size="small"
-            @click="handleMoveDown(row)"
-            :disabled="!canMoveDown(row)"
-          >
+          <el-button size="small" @click="handleMoveDown(row)" :disabled="!canMoveDown(row)">
             <el-icon><ArrowDown /></el-icon>
           </el-button>
         </template>
@@ -170,7 +156,7 @@ const handleAdd = () => {
   dialogTitle.value = '新增业绩对标'
   formData.value = {
     configurationTypeId: selectedConfigurationType.value!,
-    sortOrder: 0,
+    sortOrder: 0
   }
   dialogVisible.value = true
 }
@@ -202,7 +188,7 @@ const handleConfirm = async () => {
       await benchmarkStore.update(formData.value.id!, {
         name: formData.value.name!,
         description: formData.value.description,
-        sortOrder: formData.value.sortOrder,
+        sortOrder: formData.value.sortOrder
       })
       success('更新成功')
     } else {
@@ -211,7 +197,7 @@ const handleConfirm = async () => {
         code: formData.value.code!,
         description: formData.value.description,
         configurationTypeId: formData.value.configurationTypeId!,
-        sortOrder: formData.value.sortOrder || 0,
+        sortOrder: formData.value.sortOrder || 0
       })
       success('创建成功')
     }
@@ -228,13 +214,13 @@ const handleSortChange = () => {
 
 // 判断是否可以上移
 const canMoveUp = (data: BenchmarkDTO) => {
-  const index = benchmarks.value.findIndex(b => b.id === data.id)
+  const index = benchmarks.value.findIndex((b) => b.id === data.id)
   return index > 0
 }
 
 // 判断是否可以下移
 const canMoveDown = (data: BenchmarkDTO) => {
-  const index = benchmarks.value.findIndex(b => b.id === data.id)
+  const index = benchmarks.value.findIndex((b) => b.id === data.id)
   return index < benchmarks.value.length - 1
 }
 
@@ -244,7 +230,7 @@ const handleMoveUp = async (data: BenchmarkDTO) => {
     try {
       await benchmarkStore.update(data.id, {
         name: data.name,
-        sortOrder: (data.sortOrder || 0) - 1,
+        sortOrder: (data.sortOrder || 0) - 1
       })
       success('排序更新成功')
     } catch (err: any) {
@@ -259,7 +245,7 @@ const handleMoveDown = async (data: BenchmarkDTO) => {
     try {
       await benchmarkStore.update(data.id, {
         name: data.name,
-        sortOrder: (data.sortOrder || 0) + 1,
+        sortOrder: (data.sortOrder || 0) + 1
       })
       success('排序更新成功')
     } catch (err: any) {

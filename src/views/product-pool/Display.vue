@@ -41,24 +41,30 @@
         <!-- 产品池层级数据展示 -->
         <div v-else class="product-pool-content">
           <!-- 大分类层级 -->
-          <div v-for="majorType in productPool" :key="majorType.configurationTypeId" class="major-type-section">
+          <div
+            v-for="majorType in productPool"
+            :key="majorType.configurationTypeId"
+            class="major-type-section"
+          >
             <div class="section-title">
               <h3>{{ majorType.configurationTypeName }}</h3>
             </div>
 
             <!-- 子分类层级 -->
-            <div v-if="majorType.children && majorType.children.length > 0" class="sub-types-container">
-              <div
-                v-for="subType in majorType.children"
-                :key="subType.id"
-                class="sub-type-section"
-              >
+            <div
+              v-if="majorType.children && majorType.children.length > 0"
+              class="sub-types-container"
+            >
+              <div v-for="subType in majorType.children" :key="subType.id" class="sub-type-section">
                 <div class="sub-type-header">
                   <h4>{{ subType.name }}</h4>
                 </div>
 
                 <!-- 业绩对标层级 -->
-                <div v-if="subType.benchmarks && subType.benchmarks.length > 0" class="benchmarks-container">
+                <div
+                  v-if="subType.benchmarks && subType.benchmarks.length > 0"
+                  class="benchmarks-container"
+                >
                   <div
                     v-for="benchmark in subType.benchmarks"
                     :key="benchmark.id"
@@ -69,7 +75,10 @@
                     </div>
 
                     <!-- 策略类型层级 -->
-                    <div v-if="benchmark.strategyTypes && benchmark.strategyTypes.length > 0" class="strategy-types-container">
+                    <div
+                      v-if="benchmark.strategyTypes && benchmark.strategyTypes.length > 0"
+                      class="strategy-types-container"
+                    >
                       <div
                         v-for="strategyType in benchmark.strategyTypes"
                         :key="strategyType.id"
@@ -83,7 +92,10 @@
                         </div>
 
                         <!-- 产品卡片网格 -->
-                        <div v-if="strategyType.products && strategyType.products.length > 0" class="products-grid">
+                        <div
+                          v-if="strategyType.products && strategyType.products.length > 0"
+                          class="products-grid"
+                        >
                           <div
                             v-for="product in strategyType.products"
                             :key="product.id"
@@ -103,19 +115,27 @@
                               </div>
                               <div v-if="product.annualReturn !== undefined" class="info-item">
                                 <span class="info-label">年化收益：</span>
-                                <span class="info-value">{{ formatPercent(product.annualReturn) }}</span>
+                                <span class="info-value">{{
+                                  formatPercent(product.annualReturn)
+                                }}</span>
                               </div>
                               <div v-if="product.volatility !== undefined" class="info-item">
                                 <span class="info-label">波动率：</span>
-                                <span class="info-value">{{ formatPercent(product.volatility) }}</span>
+                                <span class="info-value">{{
+                                  formatPercent(product.volatility)
+                                }}</span>
                               </div>
                               <div v-if="product.sharpeRatio !== undefined" class="info-item">
                                 <span class="info-label">夏普比率：</span>
-                                <span class="info-value">{{ formatNumber(product.sharpeRatio) }}</span>
+                                <span class="info-value">{{
+                                  formatNumber(product.sharpeRatio)
+                                }}</span>
                               </div>
                               <div v-if="product.maxDrawdown !== undefined" class="info-item">
                                 <span class="info-label">最大回撤：</span>
-                                <span class="info-value">{{ formatPercent(product.maxDrawdown) }}</span>
+                                <span class="info-value">{{
+                                  formatPercent(product.maxDrawdown)
+                                }}</span>
                               </div>
                               <div v-if="product.fundManager" class="info-item">
                                 <span class="info-label">基金经理：</span>
@@ -123,7 +143,9 @@
                               </div>
                               <div v-if="product.fundScale !== undefined" class="info-item">
                                 <span class="info-label">基金规模：</span>
-                                <span class="info-value">{{ formatNumber(product.fundScale) }} 亿</span>
+                                <span class="info-value"
+                                  >{{ formatNumber(product.fundScale) }} 亿</span
+                                >
                               </div>
                             </div>
                             <!-- 产品描述 -->
@@ -240,11 +262,11 @@ const formatNumber = (value: number) => {
 // 获取风险等级对应的标签类型
 const getRiskLevelType = (riskLevel: string) => {
   const riskMap: Record<string, any> = {
-    '低风险': 'success',
-    '中低风险': '',
-    '中等风险': 'warning',
-    '中高风险': 'danger',
-    '高风险': 'danger'
+    低风险: 'success',
+    中低风险: '',
+    中等风险: 'warning',
+    中高风险: 'danger',
+    高风险: 'danger'
   }
   return riskMap[riskLevel] || 'info'
 }

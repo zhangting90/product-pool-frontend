@@ -44,26 +44,12 @@
                 新增子类
               </el-button>
               <el-button size="small" @click="handleEdit(data)">编辑</el-button>
-              <el-button
-                size="small"
-                type="danger"
-                @click="handleDelete(data)"
-              >
-                删除
-              </el-button>
+              <el-button size="small" type="danger" @click="handleDelete(data)"> 删除 </el-button>
               <!-- 上移/下移排序按钮 -->
-              <el-button
-                size="small"
-                @click="handleMoveUp(data)"
-                :disabled="!canMoveUp(data)"
-              >
+              <el-button size="small" @click="handleMoveUp(data)" :disabled="!canMoveUp(data)">
                 <el-icon><ArrowUp /></el-icon>
               </el-button>
-              <el-button
-                size="small"
-                @click="handleMoveDown(data)"
-                :disabled="!canMoveDown(data)"
-              >
+              <el-button size="small" @click="handleMoveDown(data)" :disabled="!canMoveDown(data)">
                 <el-icon><ArrowDown /></el-icon>
               </el-button>
             </div>
@@ -105,7 +91,7 @@ const loading = computed(() => configurationTypeStore.loading)
 // 树形控件属性映射
 const treeProps = {
   children: 'children',
-  label: 'name',
+  label: 'name'
 }
 
 // 对话框相关状态
@@ -140,7 +126,7 @@ const handleAddMajor = () => {
   dialogTitle.value = '新增大分类'
   formData.value = {
     isMajor: true,
-    sortOrder: 0,
+    sortOrder: 0
   }
   dialogVisible.value = true
 }
@@ -152,7 +138,7 @@ const handleAddSub = (parentData: ConfigurationTypeDTO) => {
   formData.value = {
     parentId: parentData.id,
     isMajor: false,
-    sortOrder: 0,
+    sortOrder: 0
   }
   dialogVisible.value = true
 }
@@ -184,7 +170,7 @@ const handleConfirm = async () => {
       await configurationTypeStore.update(formData.value.id!, {
         name: formData.value.name!,
         description: formData.value.description,
-        sortOrder: formData.value.sortOrder,
+        sortOrder: formData.value.sortOrder
       })
       success('更新成功')
     } else {
@@ -194,7 +180,7 @@ const handleConfirm = async () => {
         description: formData.value.description,
         isMajor: formData.value.isMajor!,
         parentId: formData.value.parentId,
-        sortOrder: formData.value.sortOrder || 0,
+        sortOrder: formData.value.sortOrder || 0
       })
       success('创建成功')
     }
@@ -207,15 +193,15 @@ const handleConfirm = async () => {
 // 判断节点是否可以上移
 const canMoveUp = (data: ConfigurationTypeDTO) => {
   if (data.isMajor) {
-    const index = treeData.value.findIndex(item => item.id === data.id)
+    const index = treeData.value.findIndex((item) => item.id === data.id)
     return index > 0
   } else {
     // 子类在其父节点的children中判断位置
-    const parent = treeData.value.find(item =>
-      item.children?.some(child => child.id === data.id)
+    const parent = treeData.value.find((item) =>
+      item.children?.some((child) => child.id === data.id)
     )
     if (!parent || !parent.children) return false
-    const index = parent.children.findIndex(child => child.id === data.id)
+    const index = parent.children.findIndex((child) => child.id === data.id)
     return index > 0
   }
 }
@@ -223,15 +209,15 @@ const canMoveUp = (data: ConfigurationTypeDTO) => {
 // 判断节点是否可以下移
 const canMoveDown = (data: ConfigurationTypeDTO) => {
   if (data.isMajor) {
-    const index = treeData.value.findIndex(item => item.id === data.id)
+    const index = treeData.value.findIndex((item) => item.id === data.id)
     return index < treeData.value.length - 1
   } else {
     // 子类在其父节点的children中判断位置
-    const parent = treeData.value.find(item =>
-      item.children?.some(child => child.id === data.id)
+    const parent = treeData.value.find((item) =>
+      item.children?.some((child) => child.id === data.id)
     )
     if (!parent || !parent.children) return false
-    const index = parent.children.findIndex(child => child.id === data.id)
+    const index = parent.children.findIndex((child) => child.id === data.id)
     return index < parent.children.length - 1
   }
 }
@@ -242,7 +228,7 @@ const handleMoveUp = async (data: ConfigurationTypeDTO) => {
     try {
       await configurationTypeStore.update(data.id, {
         name: data.name,
-        sortOrder: (data.sortOrder || 0) - 1,
+        sortOrder: (data.sortOrder || 0) - 1
       })
       success('排序更新成功')
     } catch (err: any) {
@@ -257,7 +243,7 @@ const handleMoveDown = async (data: ConfigurationTypeDTO) => {
     try {
       await configurationTypeStore.update(data.id, {
         name: data.name,
-        sortOrder: (data.sortOrder || 0) + 1,
+        sortOrder: (data.sortOrder || 0) + 1
       })
       success('排序更新成功')
     } catch (err: any) {

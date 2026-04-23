@@ -39,16 +39,16 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 // 组件属性定义
 interface Props {
-  visible: boolean          // 是否显示对话框
-  title: string             // 对话框标题
-  width?: string | number   // 对话框宽度
+  visible: boolean // 是否显示对话框
+  title: string // 对话框标题
+  width?: string | number // 对话框宽度
   modelValue: Record<string, any> // 表单数据（v-model）
-  rules?: FormRules         // 表单验证规则
-  labelWidth?: string | number    // 标签宽度
+  rules?: FormRules // 表单验证规则
+  labelWidth?: string | number // 标签宽度
   labelPosition?: 'left' | 'right' | 'top' // 标签位置
   size?: 'large' | 'default' | 'small' // 表单尺寸
-  loading?: boolean         // 提交按钮加载状态
-  submitText?: string       // 提交按钮文字
+  loading?: boolean // 提交按钮加载状态
+  submitText?: string // 提交按钮文字
   closeOnClickModal?: boolean // 点击遮罩关闭
   closeOnPressEscape?: boolean // 按ESC关闭
 }
@@ -57,7 +57,7 @@ interface Props {
 interface Emits {
   (e: 'update:visible', value: boolean): void
   (e: 'update:modelValue', value: Record<string, any>): void
-  (e: 'submit', data: Record<string, any>): void  // 表单提交事件
+  (e: 'submit', data: Record<string, any>): void // 表单提交事件
   (e: 'open'): void
   (e: 'close'): void
 }
@@ -70,7 +70,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   submitText: '确定',
   closeOnClickModal: false,
-  closeOnPressEscape: true,
+  closeOnPressEscape: true
 })
 
 const emit = defineEmits<Emits>()
@@ -103,9 +103,13 @@ watch(dialogVisible, (val) => {
 })
 
 // 监听内部表单数据变化，向外部同步
-watch(formData, (val) => {
-  emit('update:modelValue', val)
-}, { deep: true })
+watch(
+  formData,
+  (val) => {
+    emit('update:modelValue', val)
+  },
+  { deep: true }
+)
 
 // 对话框打开回调
 const handleOpen = async () => {
@@ -156,7 +160,7 @@ const clearValidate = () => {
 defineExpose({
   validate,
   resetFields,
-  clearValidate,
+  clearValidate
 })
 </script>
 

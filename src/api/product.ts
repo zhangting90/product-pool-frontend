@@ -62,10 +62,13 @@ export const getProductById = (id: number) => {
  * @param params - 分页参数
  * @returns 分页产品列表
  */
-export const getProductsByStrategyTypeId = (strategyTypeId: number, params: {
-  page?: number
-  size?: number
-}) => {
+export const getProductsByStrategyTypeId = (
+  strategyTypeId: number,
+  params: {
+    page?: number
+    size?: number
+  }
+) => {
   return request<PageResult<ProductDTO>>({
     url: `/api/v1/products/strategy-types/${strategyTypeId}`,
     method: 'get',
@@ -78,10 +81,7 @@ export const getProductsByStrategyTypeId = (strategyTypeId: number, params: {
  * @param params - 分页参数
  * @returns 分页的激活产品列表
  */
-export const getActiveProducts = (params: {
-  page?: number
-  size?: number
-}) => {
+export const getActiveProducts = (params: { page?: number; size?: number }) => {
   return request<PageResult<ProductDTO>>({
     url: '/api/v1/products/active',
     method: 'get',

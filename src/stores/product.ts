@@ -30,12 +30,14 @@ export const useProductStore = defineStore('product', () => {
    * @param params - 分页和排序参数
    * @returns 分页结果
    */
-  const loadProducts = async (params: {
-    page?: number
-    size?: number
-    sortBy?: string
-    sortDir?: string
-  } = {}) => {
+  const loadProducts = async (
+    params: {
+      page?: number
+      size?: number
+      sortBy?: string
+      sortDir?: string
+    } = {}
+  ) => {
     loading.value = true
     error.value = null
     try {
@@ -86,10 +88,13 @@ export const useProductStore = defineStore('product', () => {
    * @param params - 分页参数
    * @returns 分页结果
    */
-  const loadByStrategyTypeId = async (strategyTypeId: number, params: {
-    page?: number
-    size?: number
-  } = {}) => {
+  const loadByStrategyTypeId = async (
+    strategyTypeId: number,
+    params: {
+      page?: number
+      size?: number
+    } = {}
+  ) => {
     loading.value = true
     error.value = null
     try {
@@ -110,10 +115,12 @@ export const useProductStore = defineStore('product', () => {
    * @param params - 分页参数
    * @returns 分页结果
    */
-  const loadActiveProducts = async (params: {
-    page?: number
-    size?: number
-  } = {}) => {
+  const loadActiveProducts = async (
+    params: {
+      page?: number
+      size?: number
+    } = {}
+  ) => {
     loading.value = true
     error.value = null
     try {
@@ -168,7 +175,7 @@ export const useProductStore = defineStore('product', () => {
   const update = async (id: number, data: ProductUpdateDTO) => {
     try {
       const result = await productApi.updateProduct(id, data)
-      const index = products.value.findIndex(p => p.id === id)
+      const index = products.value.findIndex((p) => p.id === id)
       if (index !== -1) {
         products.value[index] = result
       }
@@ -188,7 +195,7 @@ export const useProductStore = defineStore('product', () => {
   const remove = async (id: number) => {
     try {
       await productApi.deleteProduct(id)
-      products.value = products.value.filter(p => p.id !== id)
+      products.value = products.value.filter((p) => p.id !== id)
     } catch (err: any) {
       error.value = err.message || '删除产品失败'
       throw err

@@ -13,12 +13,7 @@
           @change="handleStrategyTypeChange"
           style="width: 200px"
         >
-          <el-option
-            v-for="st in strategyTypes"
-            :key="st.id"
-            :label="st.name"
-            :value="st.id"
-          />
+          <el-option v-for="st in strategyTypes" :key="st.id" :label="st.name" :value="st.id" />
         </el-select>
         <el-button type="primary" @click="handleAdd" :disabled="!selectedStrategyType">
           <el-icon><Plus /></el-icon>
@@ -128,25 +123,11 @@
       <el-table-column label="操作" width="280" fixed="right">
         <template #default="{ row }">
           <el-button size="small" @click="handleEdit(row)">编辑</el-button>
-          <el-button
-            size="small"
-            type="danger"
-            @click="handleDelete(row)"
-          >
-            删除
-          </el-button>
-          <el-button
-            size="small"
-            @click="handleMoveUp(row)"
-            :disabled="!canMoveUp(row)"
-          >
+          <el-button size="small" type="danger" @click="handleDelete(row)"> 删除 </el-button>
+          <el-button size="small" @click="handleMoveUp(row)" :disabled="!canMoveUp(row)">
             <el-icon><ArrowUp /></el-icon>
           </el-button>
-          <el-button
-            size="small"
-            @click="handleMoveDown(row)"
-            :disabled="!canMoveDown(row)"
-          >
+          <el-button size="small" @click="handleMoveDown(row)" :disabled="!canMoveDown(row)">
             <el-icon><ArrowDown /></el-icon>
           </el-button>
         </template>
@@ -197,7 +178,7 @@ const searchForm = ref({
   name: '',
   code: '',
   riskLevel: '',
-  isActive: undefined as boolean | undefined,
+  isActive: undefined as boolean | undefined
 })
 // 对话框相关状态
 const dialogVisible = ref(false)
@@ -234,7 +215,7 @@ const loadProducts = async () => {
   try {
     await productStore.loadByStrategyTypeId(selectedStrategyType.value, {
       page: currentPage.value - 1,
-      size: pageSize.value,
+      size: pageSize.value
     })
   } catch (err: any) {
     showError(err.message || '加载产品失败')
@@ -247,7 +228,7 @@ const searchProducts = async () => {
     await productStore.searchProducts({
       ...searchForm.value,
       page: currentPage.value - 1,
-      size: pageSize.value,
+      size: pageSize.value
     })
   } catch (err: any) {
     showError(err.message || '搜索产品失败')
@@ -266,7 +247,7 @@ const handleReset = () => {
     name: '',
     code: '',
     riskLevel: '',
-    isActive: undefined,
+    isActive: undefined
   }
   currentPage.value = 1
   searchProducts()
@@ -289,7 +270,7 @@ const handleAdd = () => {
     strategyTypeId: selectedStrategyType.value!,
     riskLevel: '中等风险',
     isActive: true,
-    sortOrder: 0,
+    sortOrder: 0
   }
   dialogVisible.value = true
 }
@@ -330,7 +311,7 @@ const handleConfirm = async () => {
         fundScale: formData.value.fundScale,
         inceptionDate: formData.value.inceptionDate,
         isActive: formData.value.isActive,
-        sortOrder: formData.value.sortOrder,
+        sortOrder: formData.value.sortOrder
       })
       success('更新成功')
     } else {
@@ -348,7 +329,7 @@ const handleConfirm = async () => {
         inceptionDate: formData.value.inceptionDate,
         description: formData.value.description,
         isActive: formData.value.isActive!,
-        sortOrder: formData.value.sortOrder || 0,
+        sortOrder: formData.value.sortOrder || 0
       })
       success('创建成功')
     }
@@ -366,11 +347,11 @@ const handleSortChange = () => {
 // 根据风险等级获取标签类型
 const getRiskTagType = (level: string) => {
   const map: Record<string, any> = {
-    '低风险': 'success',
-    '中低风险': 'primary',
-    '中等风险': 'warning',
-    '中高风险': 'danger',
-    '高风险': 'danger',
+    低风险: 'success',
+    中低风险: 'primary',
+    中等风险: 'warning',
+    中高风险: 'danger',
+    高风险: 'danger'
   }
   return map[level] || 'info'
 }
@@ -383,13 +364,13 @@ const formatPercent = (value?: number) => {
 
 // 判断是否可以上移
 const canMoveUp = (data: ProductDTO) => {
-  const index = products.value.findIndex(p => p.id === data.id)
+  const index = products.value.findIndex((p) => p.id === data.id)
   return index > 0
 }
 
 // 判断是否可以下移
 const canMoveDown = (data: ProductDTO) => {
-  const index = products.value.findIndex(p => p.id === data.id)
+  const index = products.value.findIndex((p) => p.id === data.id)
   return index < products.value.length - 1
 }
 
@@ -400,7 +381,7 @@ const handleMoveUp = async (data: ProductDTO) => {
       await productStore.update(data.id, {
         name: data.name,
         riskLevel: data.riskLevel,
-        sortOrder: (data.sortOrder || 0) - 1,
+        sortOrder: (data.sortOrder || 0) - 1
       })
       success('排序更新成功')
     } catch (err: any) {
@@ -416,7 +397,7 @@ const handleMoveDown = async (data: ProductDTO) => {
       await productStore.update(data.id, {
         name: data.name,
         riskLevel: data.riskLevel,
-        sortOrder: (data.sortOrder || 0) + 1,
+        sortOrder: (data.sortOrder || 0) + 1
       })
       success('排序更新成功')
     } catch (err: any) {

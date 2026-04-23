@@ -7,10 +7,10 @@ import type { ElMessageBoxOptions } from 'element-plus'
 
 // 确认对话框选项接口
 export interface ConfirmOptions extends Partial<ElMessageBoxOptions> {
-  title?: string              // 对话框标题
-  message: string             // 提示消息
-  confirmButtonText?: string  // 确认按钮文字
-  cancelButtonText?: string   // 取消按钮文字
+  title?: string // 对话框标题
+  message: string // 提示消息
+  confirmButtonText?: string // 确认按钮文字
+  cancelButtonText?: string // 取消按钮文字
   type?: 'success' | 'warning' | 'info' | 'error' // 消息类型
 }
 
@@ -22,17 +22,13 @@ export function useConfirm() {
    */
   const confirm = (options: ConfirmOptions): Promise<boolean> => {
     return new Promise((resolve) => {
-      ElMessageBox.confirm(
-        options.message,
-        options.title || '确认操作',
-        {
-          confirmButtonText: options.confirmButtonText || '确定',
-          cancelButtonText: options.cancelButtonText || '取消',
-          type: options.type || 'warning',
-          draggable: true,
-          ...options,
-        }
-      )
+      ElMessageBox.confirm(options.message, options.title || '确认操作', {
+        confirmButtonText: options.confirmButtonText || '确定',
+        cancelButtonText: options.cancelButtonText || '取消',
+        type: options.type || 'warning',
+        draggable: true,
+        ...options
+      })
         .then(() => {
           resolve(true)
         })
@@ -50,12 +46,12 @@ export function useConfirm() {
   const confirmDelete = (message?: string): Promise<boolean> => {
     return confirm({
       message: message || '此操作将永久删除该数据，是否继续？',
-      type: 'warning',
+      type: 'warning'
     })
   }
 
   return {
     confirm,
-    confirmDelete,
+    confirmDelete
   }
 }

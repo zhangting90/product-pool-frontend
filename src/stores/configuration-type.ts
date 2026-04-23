@@ -4,7 +4,11 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { ConfigurationTypeDTO, ConfigurationTypeCreateDTO, ConfigurationTypeUpdateDTO } from '@/types/configuration-type'
+import type {
+  ConfigurationTypeDTO,
+  ConfigurationTypeCreateDTO,
+  ConfigurationTypeUpdateDTO
+} from '@/types/configuration-type'
 import * as configurationTypeApi from '@/api/configuration-type'
 
 export const useConfigurationTypeStore = defineStore('configurationType', () => {
@@ -16,14 +20,10 @@ export const useConfigurationTypeStore = defineStore('configurationType', () => 
   const error = ref<string | null>(null)
 
   /** 计算属性：大分类列表 */
-  const majorTypes = computed(() =>
-    configurationTypes.value.filter(ct => ct.isMajor)
-  )
+  const majorTypes = computed(() => configurationTypes.value.filter((ct) => ct.isMajor))
 
   /** 计算属性：子分类列表 */
-  const subTypes = computed(() =>
-    configurationTypes.value.filter(ct => !ct.isMajor)
-  )
+  const subTypes = computed(() => configurationTypes.value.filter((ct) => !ct.isMajor))
 
   /**
    * 加载所有配置类型
@@ -127,7 +127,7 @@ export const useConfigurationTypeStore = defineStore('configurationType', () => 
   const update = async (id: number, data: ConfigurationTypeUpdateDTO) => {
     try {
       const result = await configurationTypeApi.updateConfigurationType(id, data)
-      const index = configurationTypes.value.findIndex(ct => ct.id === id)
+      const index = configurationTypes.value.findIndex((ct) => ct.id === id)
       if (index !== -1) {
         configurationTypes.value[index] = result
       }
@@ -145,7 +145,7 @@ export const useConfigurationTypeStore = defineStore('configurationType', () => 
   const remove = async (id: number) => {
     try {
       await configurationTypeApi.deleteConfigurationType(id)
-      configurationTypes.value = configurationTypes.value.filter(ct => ct.id !== id)
+      configurationTypes.value = configurationTypes.value.filter((ct) => ct.id !== id)
     } catch (err: any) {
       error.value = err.message || '删除配置类型失败'
       throw err

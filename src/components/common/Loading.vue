@@ -15,8 +15,8 @@ import { Loading } from '@element-plus/icons-vue'
 
 // 组件属性定义
 interface Props {
-  visible: boolean    // 是否显示加载状态
-  text?: string       // 加载提示文字
+  visible: boolean // 是否显示加载状态
+  text?: string // 加载提示文字
   fullscreen?: boolean // 是否全屏显示
 }
 

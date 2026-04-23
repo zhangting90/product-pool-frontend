@@ -3,7 +3,11 @@
  * 提供配置类型的增删改查接口，包括层级结构和大分类/子分类查询
  */
 import request from '@/utils/request'
-import type { ConfigurationTypeDTO, ConfigurationTypeCreateDTO, ConfigurationTypeUpdateDTO } from '@/types/configuration-type'
+import type {
+  ConfigurationTypeDTO,
+  ConfigurationTypeCreateDTO,
+  ConfigurationTypeUpdateDTO
+} from '@/types/configuration-type'
 
 /**
  * 获取所有配置类型

@@ -6,9 +6,7 @@
       <h2 class="error-message">页面未找到</h2>
       <p class="error-description">抱歉，您访问的页面不存在。</p>
       <!-- 返回首页按钮 -->
-      <el-button type="primary" @click="goHome" class="back-button">
-        返回首页
-      </el-button>
+      <el-button type="primary" @click="goHome" class="back-button"> 返回首页 </el-button>
     </div>
   </div>
 </template>

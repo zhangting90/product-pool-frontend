@@ -37,31 +37,31 @@ import { watch } from 'vue'
 
 // 组件属性定义
 interface Props {
-  visible: boolean          // 是否显示对话框
-  title?: string            // 对话框标题
-  width?: string | number   // 对话框宽度
-  fullscreen?: boolean      // 是否全屏
-  top?: string              // 距顶部距离
-  modal?: boolean           // 是否显示遮罩
+  visible: boolean // 是否显示对话框
+  title?: string // 对话框标题
+  width?: string | number // 对话框宽度
+  fullscreen?: boolean // 是否全屏
+  top?: string // 距顶部距离
+  modal?: boolean // 是否显示遮罩
   closeOnClickModal?: boolean // 点击遮罩关闭
   closeOnPressEscape?: boolean // 按ESC关闭
-  showClose?: boolean       // 是否显示关闭按钮
-  destroyOnClose?: boolean  // 关闭时是否销毁内容
-  hideFooter?: boolean      // 是否隐藏底部按钮
-  loading?: boolean         // 确认按钮加载状态
-  confirmText?: string      // 确认按钮文字
-  cancelText?: string       // 取消按钮文字
+  showClose?: boolean // 是否显示关闭按钮
+  destroyOnClose?: boolean // 关闭时是否销毁内容
+  hideFooter?: boolean // 是否隐藏底部按钮
+  loading?: boolean // 确认按钮加载状态
+  confirmText?: string // 确认按钮文字
+  cancelText?: string // 取消按钮文字
 }
 
 // 组件事件定义
 interface Emits {
   (e: 'update:visible', value: boolean): void
-  (e: 'confirm'): void    // 确认事件
-  (e: 'cancel'): void     // 取消事件
-  (e: 'open'): void       // 打开动画开始
-  (e: 'opened'): void     // 打开动画结束
-  (e: 'close'): void      // 关闭动画开始
-  (e: 'closed'): void     // 关闭动画结束
+  (e: 'confirm'): void // 确认事件
+  (e: 'cancel'): void // 取消事件
+  (e: 'open'): void // 打开动画开始
+  (e: 'opened'): void // 打开动画结束
+  (e: 'close'): void // 关闭动画开始
+  (e: 'closed'): void // 关闭动画结束
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -77,7 +77,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideFooter: false,
   loading: false,
   confirmText: '确定',
-  cancelText: '取消',
+  cancelText: '取消'
 })
 
 const emit = defineEmits<Emits>()

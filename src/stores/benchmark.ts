@@ -40,9 +40,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
     loading.value = true
     error.value = null
     try {
-      benchmarks.value = await benchmarkApi.getBenchmarksByConfigurationTypeId(
-        configurationTypeId
-      )
+      benchmarks.value = await benchmarkApi.getBenchmarksByConfigurationTypeId(configurationTypeId)
     } catch (err: any) {
       error.value = err.message || '加载业绩对标失败'
       throw err
@@ -90,7 +88,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
   const update = async (id: number, data: BenchmarkUpdateDTO) => {
     try {
       const result = await benchmarkApi.updateBenchmark(id, data)
-      const index = benchmarks.value.findIndex(b => b.id === id)
+      const index = benchmarks.value.findIndex((b) => b.id === id)
       if (index !== -1) {
         benchmarks.value[index] = result
       }
@@ -108,7 +106,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
   const remove = async (id: number) => {
     try {
       await benchmarkApi.deleteBenchmark(id)
-      benchmarks.value = benchmarks.value.filter(b => b.id !== id)
+      benchmarks.value = benchmarks.value.filter((b) => b.id !== id)
     } catch (err: any) {
       error.value = err.message || '删除业绩对标失败'
       throw err

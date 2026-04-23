@@ -3,7 +3,11 @@
  * 提供策略类型的增删改查接口，支持按业绩对标筛选
  */
 import request from '@/utils/request'
-import type { StrategyTypeDTO, StrategyTypeCreateDTO, StrategyTypeUpdateDTO } from '@/types/strategy-type'
+import type {
+  StrategyTypeDTO,
+  StrategyTypeCreateDTO,
+  StrategyTypeUpdateDTO
+} from '@/types/strategy-type'
 
 /**
  * 获取所有策略类型
