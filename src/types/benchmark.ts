@@ -4,15 +4,13 @@
  */
 export interface BenchmarkDTO {
   /** 主键ID */
-  id: number
+  id: string
   /** 业绩对标名称 */
   name: string
-  /** 业绩对标编码 */
-  code: string
   /** 业绩对标描述 */
   description?: string
   /** 所属配置类型ID */
-  configurationTypeId: number
+  configurationTypeId: string
   /** 所属配置类型名称 */
   configurationTypeName?: string
   /** 排序序号 */
@@ -31,12 +29,10 @@ export interface BenchmarkDTO {
 export interface BenchmarkCreateDTO {
   /** 业绩对标名称 */
   name: string
-  /** 业绩对标编码 */
-  code: string
   /** 业绩对标描述 */
   description?: string
   /** 所属配置类型ID */
-  configurationTypeId: number
+  configurationTypeId: string
   /** 排序序号 */
   sortOrder?: number
 }
@@ -58,13 +54,13 @@ export interface BenchmarkUpdateDTO {
  */
 export interface StrategyTypeDTO {
   /** 主键ID */
-  id: number
+  id: string
   /** 策略类型名称 */
   name: string
   /** 策略类型描述 */
   description?: string
   /** 所属业绩对标ID */
-  benchmarkId: number
+  benchmarkId: string
   /** 所属业绩对标名称 */
   benchmarkName?: string
   /** 排序序号 */

@@ -4,17 +4,15 @@
  */
 export interface ConfigurationTypeDTO {
   /** 主键ID */
-  id: number
-  /** 配置类型名称 */
+  id: string
+  /** 配置类型名称（唯一） */
   name: string
-  /** 配置类型编码 */
-  code: string
   /** 配置类型描述 */
   description?: string
   /** 是否为大分类 */
   isMajor: boolean
   /** 父分类ID */
-  parentId?: number
+  parentId?: string
   /** 排序序号 */
   sortOrder?: number
   /** 创建时间 */
@@ -31,16 +29,14 @@ export interface ConfigurationTypeDTO {
  * 创建配置类型请求体
  */
 export interface ConfigurationTypeCreateDTO {
-  /** 配置类型名称 */
+  /** 配置类型名称（唯一） */
   name: string
-  /** 配置类型编码 */
-  code: string
   /** 配置类型描述 */
   description?: string
   /** 是否为大分类 */
   isMajor: boolean
   /** 父分类ID */
-  parentId?: number
+  parentId?: string
   /** 排序序号 */
   sortOrder?: number
 }
@@ -62,7 +58,7 @@ export interface ConfigurationTypeUpdateDTO {
  */
 export interface BenchmarkDTO {
   /** 主键ID */
-  id: number
+  id: string
   /** 业绩对标名称 */
   name: string
   /** 业绩对标编码 */
@@ -70,7 +66,7 @@ export interface BenchmarkDTO {
   /** 业绩对标描述 */
   description?: string
   /** 所属配置类型ID */
-  configurationTypeId: number
+  configurationTypeId: string
   /** 所属配置类型名称 */
   configurationTypeName?: string
   /** 排序序号 */

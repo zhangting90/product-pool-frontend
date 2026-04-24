@@ -61,9 +61,8 @@ export const useProductStore = defineStore('product', () => {
   const searchProducts = async (params: {
     name?: string
     code?: string
-    strategyTypeId?: number
-    riskLevel?: string
-    isActive?: boolean
+    strategyTypeId?: string
+    strategyTypeIds?: number[]
     page?: number
     size?: number
   }) => {
@@ -89,7 +88,7 @@ export const useProductStore = defineStore('product', () => {
    * @returns 分页结果
    */
   const loadByStrategyTypeId = async (
-    strategyTypeId: number,
+    strategyTypeId: string,
     params: {
       page?: number
       size?: number
@@ -141,7 +140,7 @@ export const useProductStore = defineStore('product', () => {
    * @param id - 产品ID
    * @returns 产品详情
    */
-  const getById = async (id: number) => {
+  const getById = async (id: string) => {
     try {
       return await productApi.getProductById(id)
     } catch (err: any) {
@@ -172,7 +171,7 @@ export const useProductStore = defineStore('product', () => {
    * @param data - 更新产品请求体
    * @returns 更新后的产品
    */
-  const update = async (id: number, data: ProductUpdateDTO) => {
+  const update = async (id: string, data: ProductUpdateDTO) => {
     try {
       const result = await productApi.updateProduct(id, data)
       const index = products.value.findIndex((p) => p.id === id)
@@ -192,7 +191,7 @@ export const useProductStore = defineStore('product', () => {
    * 删除产品
    * @param id - 产品ID
    */
-  const remove = async (id: number) => {
+  const remove = async (id: string) => {
     try {
       await productApi.deleteProduct(id)
       products.value = products.value.filter((p) => p.id !== id)

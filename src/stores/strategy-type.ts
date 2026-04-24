@@ -20,14 +20,18 @@ export const useStrategyTypeStore = defineStore('strategyType', () => {
   const error = ref<string | null>(null)
 
   /**
-   * 加载所有策略类型
-   * @param benchmarkId - 可选，按业绩对标ID筛选
+   * 加载策略类型，支持多级筛选
+   * @param params - 筛选参数（benchmarkId/majorTypeId/subTypeId 均可选）
    */
-  const loadStrategyTypes = async (benchmarkId?: number) => {
+  const loadStrategyTypes = async (params?: {
+    benchmarkId?: string
+    majorTypeId?: string
+    subTypeId?: string
+  }) => {
     loading.value = true
     error.value = null
     try {
-      strategyTypes.value = await strategyTypeApi.getStrategyTypes(benchmarkId)
+      strategyTypes.value = await strategyTypeApi.getStrategyTypes(params)
     } catch (err: any) {
       error.value = err.message || '加载策略类型失败'
       throw err
@@ -40,7 +44,7 @@ export const useStrategyTypeStore = defineStore('strategyType', () => {
    * 根据业绩对标ID加载策略类型
    * @param benchmarkId - 业绩对标ID
    */
-  const loadByBenchmarkId = async (benchmarkId: number) => {
+  const loadByBenchmarkId = async (benchmarkId: string) => {
     loading.value = true
     error.value = null
     try {
@@ -58,7 +62,7 @@ export const useStrategyTypeStore = defineStore('strategyType', () => {
    * @param id - 策略类型ID
    * @returns 策略类型详情
    */
-  const getById = async (id: number) => {
+  const getById = async (id: string) => {
     try {
       return await strategyTypeApi.getStrategyTypeById(id)
     } catch (err: any) {
@@ -89,7 +93,7 @@ export const useStrategyTypeStore = defineStore('strategyType', () => {
    * @param data - 更新策略类型请求体
    * @returns 更新后的策略类型
    */
-  const update = async (id: number, data: StrategyTypeUpdateDTO) => {
+  const update = async (id: string, data: StrategyTypeUpdateDTO) => {
     try {
       const result = await strategyTypeApi.updateStrategyType(id, data)
       const index = strategyTypes.value.findIndex((st) => st.id === id)
@@ -107,7 +111,7 @@ export const useStrategyTypeStore = defineStore('strategyType', () => {
    * 删除策略类型
    * @param id - 策略类型ID
    */
-  const remove = async (id: number) => {
+  const remove = async (id: string) => {
     try {
       await strategyTypeApi.deleteStrategyType(id)
       strategyTypes.value = strategyTypes.value.filter((st) => st.id !== id)

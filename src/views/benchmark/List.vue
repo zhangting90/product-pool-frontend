@@ -5,22 +5,38 @@
     <div class="header">
       <h2>业绩对标管理</h2>
       <div class="header-actions">
-        <!-- 配置类型筛选下拉框 -->
+        <!-- 大分类筛选下拉框 -->
         <el-select
-          v-model="selectedConfigurationType"
-          placeholder="选择配置类型"
+          v-model="selectedMajorType"
+          placeholder="选择大分类"
           clearable
-          @change="handleConfigurationTypeChange"
+          @change="handleMajorTypeChange"
           style="width: 200px"
         >
           <el-option
-            v-for="ct in configurationTypes"
+            v-for="ct in majorTypes"
             :key="ct.id"
             :label="ct.name"
             :value="ct.id"
           />
         </el-select>
-        <el-button type="primary" @click="handleAdd" :disabled="!selectedConfigurationType">
+        <!-- 子分类筛选下拉框 -->
+        <el-select
+          v-model="selectedSubType"
+          placeholder="选择子分类"
+          clearable
+          @change="handleSubTypeChange"
+          style="width: 200px"
+          :disabled="!selectedMajorType"
+        >
+          <el-option
+            v-for="ct in subTypes"
+            :key="ct.id"
+            :label="ct.name"
+            :value="ct.id"
+          />
+        </el-select>
+        <el-button type="primary" @click="handleAdd" :disabled="!selectedSubType">
           <el-icon><Plus /></el-icon>
           新增业绩对标
         </el-button>
@@ -39,7 +55,6 @@
       @sort-change="handleSortChange"
     >
       <el-table-column label="名称" prop="name" sortable="custom" />
-      <el-table-column label="代码" prop="code" sortable="custom" />
       <el-table-column label="配置类型" prop="configurationTypeName" sortable="custom" />
       <el-table-column label="描述" prop="description" show-overflow-tooltip />
       <el-table-column label="排序" prop="sortOrder" sortable="custom" width="100" />
@@ -86,13 +101,34 @@ const benchmarkStore = useBenchmarkStore()
 const { success, error: showError } = useMessage()
 const { confirmDelete } = useConfirm()
 
-// 计算属性：配置类型列表、业绩对标列表、加载状态
-const configurationTypes = computed(() => configurationTypeStore.majorTypes)
-const benchmarks = computed(() => benchmarkStore.benchmarks)
+// 计算属性：大分类列表
+const majorTypes = computed(() => configurationTypeStore.majorTypes)
+// 根据选中的大分类过滤子分类列表
+const subTypes = computed(() => {
+  if (!selectedMajorType.value) return []
+  return configurationTypeStore.configurationTypes.filter(
+    (ct) => !ct.isMajor && ct.parentId === selectedMajorType.value
+  )
+})
+// 根据选中状态过滤业绩对标：选了子分类用子分类ID过滤，仅选大分类按子分类ID集合过滤，都没选显示全部
+const benchmarks = computed(() => {
+  const all = benchmarkStore.benchmarks
+  if (selectedSubType.value) {
+    return all
+  }
+  if (selectedMajorType.value) {
+    const subTypeIds = configurationTypeStore.configurationTypes
+      .filter((ct) => !ct.isMajor && ct.parentId === selectedMajorType.value)
+      .map((ct) => ct.id)
+    return all.filter((b) => subTypeIds.includes(b.configurationTypeId))
+  }
+  return all
+})
 const loading = computed(() => benchmarkStore.loading)
 
-// 当前选中的配置类型ID
-const selectedConfigurationType = ref<number>()
+// 当前选中的大分类ID和子分类ID
+const selectedMajorType = ref<string>()
+const selectedSubType = ref<string>()
 // 对话框相关状态
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
@@ -104,29 +140,35 @@ onMounted(() => {
   loadConfigurationTypes()
 })
 
-// 加载配置类型（大分类）列表
+// 加载所有配置类型数据（大分类+子分类）
 const loadConfigurationTypes = async () => {
   try {
-    await configurationTypeStore.loadMajorTypes()
+    await configurationTypeStore.loadConfigurationTypes()
   } catch (err: any) {
     showError(err.message || '加载配置类型失败')
   }
 }
 
-// 配置类型筛选变化处理
-const handleConfigurationTypeChange = () => {
-  if (selectedConfigurationType.value) {
+// 大分类变化处理：清空子分类选择，加载全部业绩对标
+const handleMajorTypeChange = () => {
+  selectedSubType.value = undefined
+  loadAllBenchmarks()
+}
+
+// 子分类变化处理：加载对应的业绩对标
+const handleSubTypeChange = () => {
+  if (selectedSubType.value) {
     loadBenchmarks()
   } else {
     loadAllBenchmarks()
   }
 }
 
-// 按配置类型加载业绩对标
+// 按子分类加载业绩对标
 const loadBenchmarks = async () => {
-  if (!selectedConfigurationType.value) return
+  if (!selectedSubType.value) return
   try {
-    await benchmarkStore.loadByConfigurationTypeId(selectedConfigurationType.value)
+    await benchmarkStore.loadByConfigurationTypeId(selectedSubType.value)
   } catch (err: any) {
     showError(err.message || '加载业绩对标失败')
   }
@@ -142,20 +184,20 @@ const loadAllBenchmarks = async () => {
 }
 
 // 刷新数据
-const handleRefresh = () => {
-  if (selectedConfigurationType.value) {
-    loadBenchmarks()
+const handleRefresh = async () => {
+  if (selectedSubType.value) {
+    await loadBenchmarks()
   } else {
-    loadAllBenchmarks()
+    await loadAllBenchmarks()
   }
 }
 
-// 新增业绩对标
+// 新增业绩对标（使用选中的子分类ID）
 const handleAdd = () => {
   isEdit.value = false
   dialogTitle.value = '新增业绩对标'
   formData.value = {
-    configurationTypeId: selectedConfigurationType.value!,
+    configurationTypeId: selectedSubType.value!,
     sortOrder: 0
   }
   dialogVisible.value = true
@@ -174,6 +216,7 @@ const handleDelete = async (data: BenchmarkDTO) => {
   if (await confirmDelete(`确定要删除 "${data.name}" 吗？`)) {
     try {
       await benchmarkStore.remove(data.id)
+      await handleRefresh()
       success('删除成功')
     } catch (err: any) {
       showError(err.message || '删除失败')
@@ -190,18 +233,17 @@ const handleConfirm = async () => {
         description: formData.value.description,
         sortOrder: formData.value.sortOrder
       })
-      success('更新成功')
     } else {
       await benchmarkStore.create({
         name: formData.value.name!,
-        code: formData.value.code!,
         description: formData.value.description,
         configurationTypeId: formData.value.configurationTypeId!,
         sortOrder: formData.value.sortOrder || 0
       })
-      success('创建成功')
     }
     dialogVisible.value = false
+    handleRefresh()
+    success(isEdit.value ? '更新成功' : '创建成功')
   } catch (err: any) {
     showError(err.message || isEdit.value ? '更新失败' : '创建失败')
   }
@@ -232,6 +274,7 @@ const handleMoveUp = async (data: BenchmarkDTO) => {
         name: data.name,
         sortOrder: (data.sortOrder || 0) - 1
       })
+      await handleRefresh()
       success('排序更新成功')
     } catch (err: any) {
       showError(err.message || '排序更新失败')
@@ -247,6 +290,7 @@ const handleMoveDown = async (data: BenchmarkDTO) => {
         name: data.name,
         sortOrder: (data.sortOrder || 0) + 1
       })
+      await handleRefresh()
       success('排序更新成功')
     } catch (err: any) {
       showError(err.message || '排序更新失败')

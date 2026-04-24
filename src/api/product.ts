@@ -31,9 +31,8 @@ export const getProducts = (params: {
 export const searchProducts = (params: {
   name?: string
   code?: string
-  strategyTypeId?: number
-  riskLevel?: string
-  isActive?: boolean
+  strategyTypeId?: string
+  strategyTypeIds?: number[]
   page?: number
   size?: number
 }) => {
@@ -49,7 +48,7 @@ export const searchProducts = (params: {
  * @param id - 产品ID
  * @returns 产品详情
  */
-export const getProductById = (id: number) => {
+export const getProductById = (id: string) => {
   return request<ProductDTO>({
     url: `/api/v1/products/${id}`,
     method: 'get'
@@ -63,7 +62,7 @@ export const getProductById = (id: number) => {
  * @returns 分页产品列表
  */
 export const getProductsByStrategyTypeId = (
-  strategyTypeId: number,
+  strategyTypeId: string,
   params: {
     page?: number
     size?: number
@@ -108,7 +107,7 @@ export const createProduct = (data: ProductCreateDTO) => {
  * @param data - 更新产品请求体
  * @returns 更新后的产品
  */
-export const updateProduct = (id: number, data: ProductUpdateDTO) => {
+export const updateProduct = (id: string, data: ProductUpdateDTO) => {
   return request<ProductDTO>({
     url: `/api/v1/products/${id}`,
     method: 'put',
@@ -120,7 +119,7 @@ export const updateProduct = (id: number, data: ProductUpdateDTO) => {
  * 删除产品
  * @param id - 产品ID
  */
-export const deleteProduct = (id: number) => {
+export const deleteProduct = (id: string) => {
   return request({
     url: `/api/v1/products/${id}`,
     method: 'delete'

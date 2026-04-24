@@ -1,6 +1,6 @@
 /**
  * 策略类型 API 模块
- * 提供策略类型的增删改查接口，支持按业绩对标筛选
+ * 提供策略类型的增删改查接口，支持按大分类、子分类、业绩对标多级筛选
  */
 import request from '@/utils/request'
 import type {
@@ -10,15 +10,19 @@ import type {
 } from '@/types/strategy-type'
 
 /**
- * 获取所有策略类型
- * @param benchmarkId - 可选，按业绩对标ID筛选
+ * 获取策略类型列表，支持多级筛选
+ * @param params - 筛选参数（benchmarkId/majorTypeId/subTypeId 均可选）
  * @returns 策略类型列表
  */
-export const getStrategyTypes = (benchmarkId?: number) => {
+export const getStrategyTypes = (params?: {
+  benchmarkId?: string
+  majorTypeId?: string
+  subTypeId?: string
+}) => {
   return request<StrategyTypeDTO[]>({
     url: '/api/v1/strategy-types',
     method: 'get',
-    params: { benchmarkId }
+    params
   })
 }
 
@@ -27,7 +31,7 @@ export const getStrategyTypes = (benchmarkId?: number) => {
  * @param id - 策略类型ID
  * @returns 策略类型详情
  */
-export const getStrategyTypeById = (id: number) => {
+export const getStrategyTypeById = (id: string) => {
   return request<StrategyTypeDTO>({
     url: `/api/v1/strategy-types/${id}`,
     method: 'get'
@@ -39,7 +43,7 @@ export const getStrategyTypeById = (id: number) => {
  * @param benchmarkId - 业绩对标ID
  * @returns 策略类型列表
  */
-export const getStrategyTypesByBenchmarkId = (benchmarkId: number) => {
+export const getStrategyTypesByBenchmarkId = (benchmarkId: string) => {
   return request<StrategyTypeDTO[]>({
     url: `/api/v1/strategy-types/benchmarks/${benchmarkId}`,
     method: 'get'
@@ -65,7 +69,7 @@ export const createStrategyType = (data: StrategyTypeCreateDTO) => {
  * @param data - 更新策略类型请求体
  * @returns 更新后的策略类型
  */
-export const updateStrategyType = (id: number, data: StrategyTypeUpdateDTO) => {
+export const updateStrategyType = (id: string, data: StrategyTypeUpdateDTO) => {
   return request<StrategyTypeDTO>({
     url: `/api/v1/strategy-types/${id}`,
     method: 'put',
@@ -77,7 +81,7 @@ export const updateStrategyType = (id: number, data: StrategyTypeUpdateDTO) => {
  * 删除策略类型
  * @param id - 策略类型ID
  */
-export const deleteStrategyType = (id: number) => {
+export const deleteStrategyType = (id: string) => {
   return request({
     url: `/api/v1/strategy-types/${id}`,
     method: 'delete'

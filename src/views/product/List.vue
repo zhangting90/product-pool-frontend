@@ -1,17 +1,59 @@
-<!-- 产品管理页面：按策略类型筛选，支持搜索、分页，表格展示产品列表 -->
+<!-- 产品管理页面：按大分类→子分类→业绩对标→策略类型四级联动筛选，支持搜索、分页，表格展示产品列表 -->
 <template>
   <div class="product-list">
-    <!-- 页面头部：标题、策略类型筛选和操作按钮 -->
+    <!-- 页面头部：标题、四级筛选和操作按钮 -->
     <div class="header">
       <h2>产品管理</h2>
       <div class="header-actions">
+        <!-- 大分类筛选下拉框 -->
+        <el-select
+          v-model="selectedMajorType"
+          placeholder="选择大分类"
+          clearable
+          @change="handleMajorTypeChange"
+          style="width: 180px"
+        >
+          <el-option
+            v-for="ct in majorTypes"
+            :key="ct.id"
+            :label="ct.name"
+            :value="ct.id"
+          />
+        </el-select>
+        <!-- 子分类筛选下拉框 -->
+        <el-select
+          v-model="selectedSubType"
+          placeholder="选择子分类"
+          clearable
+          @change="handleSubTypeChange"
+          style="width: 180px"
+          :disabled="!selectedMajorType"
+        >
+          <el-option
+            v-for="ct in subTypes"
+            :key="ct.id"
+            :label="ct.name"
+            :value="ct.id"
+          />
+        </el-select>
+        <!-- 业绩对标筛选下拉框 -->
+        <el-select
+          v-model="selectedBenchmark"
+          placeholder="选择业绩对标"
+          clearable
+          @change="handleBenchmarkChange"
+          style="width: 180px"
+          :disabled="!selectedMajorType"
+        >
+          <el-option v-for="bm in benchmarks" :key="bm.id" :label="bm.name" :value="bm.id" />
+        </el-select>
         <!-- 策略类型筛选下拉框 -->
         <el-select
           v-model="selectedStrategyType"
           placeholder="选择策略类型"
           clearable
           @change="handleStrategyTypeChange"
-          style="width: 200px"
+          style="width: 180px"
         >
           <el-option v-for="st in strategyTypes" :key="st.id" :label="st.name" :value="st.id" />
         </el-select>
@@ -26,7 +68,7 @@
       </div>
     </div>
 
-    <!-- 搜索栏：产品名称、代码、风险等级、状态筛选 -->
+    <!-- 搜索栏：产品名称、代码筛选 -->
     <div class="search-bar">
       <el-input
         v-model="searchForm.name"
@@ -42,29 +84,6 @@
         style="width: 200px"
         @change="handleSearch"
       />
-      <el-select
-        v-model="searchForm.riskLevel"
-        placeholder="风险等级"
-        clearable
-        style="width: 150px"
-        @change="handleSearch"
-      >
-        <el-option label="低风险" value="低风险" />
-        <el-option label="中低风险" value="中低风险" />
-        <el-option label="中等风险" value="中等风险" />
-        <el-option label="中高风险" value="中高风险" />
-        <el-option label="高风险" value="高风险" />
-      </el-select>
-      <el-select
-        v-model="searchForm.isActive"
-        placeholder="状态"
-        clearable
-        style="width: 120px"
-        @change="handleSearch"
-      >
-        <el-option label="激活" :value="true" />
-        <el-option label="停用" :value="false" />
-      </el-select>
       <el-button type="primary" @click="handleSearch">搜索</el-button>
       <el-button @click="handleReset">重置</el-button>
     </div>
@@ -79,48 +98,12 @@
       v-model:page-size="pageSize"
       @sort-change="handleSortChange"
     >
-      <el-table-column label="名称" prop="name" sortable="custom" />
       <el-table-column label="代码" prop="code" sortable="custom" width="150" />
+      <el-table-column label="名称" prop="name" sortable="custom" />
       <el-table-column label="策略类型" prop="strategyTypeName" sortable="custom" />
-      <!-- 风险等级列，使用标签展示 -->
-      <el-table-column label="风险等级" prop="riskLevel" sortable="custom" width="120">
-        <template #default="{ row }">
-          <el-tag :type="getRiskTagType(row.riskLevel)">
-            {{ row.riskLevel }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <!-- 年化收益率列，格式化为百分比 -->
-      <el-table-column label="年化收益率" prop="annualReturn" sortable="custom" width="120">
-        <template #default="{ row }">
-          {{ formatPercent(row.annualReturn) }}
-        </template>
-      </el-table-column>
-      <!-- 波动率列，格式化为百分比 -->
-      <el-table-column label="波动率" prop="volatility" sortable="custom" width="120">
-        <template #default="{ row }">
-          {{ formatPercent(row.volatility) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="夏普比率" prop="sharpeRatio" sortable="custom" width="120" />
-      <!-- 最大回撤列，格式化为百分比 -->
-      <el-table-column label="最大回撤" prop="maxDrawdown" sortable="custom" width="120">
-        <template #default="{ row }">
-          {{ formatPercent(row.maxDrawdown) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="基金经理" prop="fundManager" width="120" />
-      <!-- 状态列，使用标签展示激活/停用 -->
-      <el-table-column label="状态" prop="isActive" sortable="custom" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.isActive ? 'success' : 'info'">
-            {{ row.isActive ? '激活' : '停用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column label="排序" prop="sortOrder" sortable="custom" width="100" />
       <!-- 操作列：编辑、删除、上移、下移 -->
-      <el-table-column label="操作" width="280" fixed="right">
+      <el-table-column label="操作" width="240" fixed="right">
         <template #default="{ row }">
           <el-button size="small" @click="handleEdit(row)">编辑</el-button>
           <el-button size="small" type="danger" @click="handleDelete(row)"> 删除 </el-button>
@@ -148,6 +131,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { Plus, Refresh, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { useConfigurationTypeStore } from '@/stores/configuration-type'
+import { useBenchmarkStore } from '@/stores/benchmark'
 import { useStrategyTypeStore } from '@/stores/strategy-type'
 import { useProductStore } from '@/stores/product'
 import { useMessage } from '@/composables/useMessage'
@@ -157,28 +142,57 @@ import ProductDialog from './ProductDialog.vue'
 import type { ProductDTO } from '@/types/product'
 
 // 初始化store和工具函数
+const configurationTypeStore = useConfigurationTypeStore()
+const benchmarkStore = useBenchmarkStore()
 const strategyTypeStore = useStrategyTypeStore()
 const productStore = useProductStore()
 const { success, error: showError } = useMessage()
 const { confirmDelete } = useConfirm()
 
-// 计算属性：策略类型列表、产品列表、加载状态、总数
-const strategyTypes = computed(() => strategyTypeStore.strategyTypes)
+// 计算属性：大分类列表
+const majorTypes = computed(() => configurationTypeStore.majorTypes)
+// 根据选中的大分类过滤子分类列表
+const subTypes = computed(() => {
+  if (!selectedMajorType.value) return []
+  return configurationTypeStore.configurationTypes.filter(
+    (ct) => !ct.isMajor && ct.parentId === selectedMajorType.value
+  )
+})
+// 根据选中状态过滤业绩对标列表
+const benchmarks = computed(() => {
+  const all = benchmarkStore.benchmarks
+  if (!selectedMajorType.value) return all
+  if (selectedSubType.value) {
+    return all.filter((b) => b.configurationTypeId === selectedSubType.value)
+  }
+  const subTypeIds = configurationTypeStore.configurationTypes
+    .filter((ct) => !ct.isMajor && ct.parentId === selectedMajorType.value)
+    .map((ct) => ct.id)
+  return all.filter((b) => subTypeIds.includes(b.configurationTypeId))
+})
+// 根据选中状态过滤策略类型列表
+const strategyTypes = computed(() => {
+  const all = strategyTypeStore.strategyTypes
+  if (!selectedBenchmark.value) return all
+  return all.filter((st) => st.benchmarkId === selectedBenchmark.value)
+})
+// 产品列表、加载状态、总数
 const products = computed(() => productStore.products)
 const loading = computed(() => productStore.loading)
 const total = computed(() => productStore.pageResult.totalElements)
 
-// 当前选中的策略类型ID
-const selectedStrategyType = ref<number>()
+// 当前选中的大分类ID、子分类ID、业绩对标ID、策略类型ID
+const selectedMajorType = ref<string>()
+const selectedSubType = ref<string>()
+const selectedBenchmark = ref<string>()
+const selectedStrategyType = ref<string>()
 // 分页状态
 const currentPage = ref(1)
 const pageSize = ref(10)
 // 搜索表单
 const searchForm = ref({
   name: '',
-  code: '',
-  riskLevel: '',
-  isActive: undefined as boolean | undefined
+  code: ''
 })
 // 对话框相关状态
 const dialogVisible = ref(false)
@@ -186,50 +200,110 @@ const dialogTitle = ref('')
 const isEdit = ref(false)
 const formData = ref<Partial<ProductDTO>>({})
 
-// 页面挂载时加载策略类型数据
-onMounted(() => {
-  loadStrategyTypes()
+// 页面挂载时加载所有数据
+onMounted(async () => {
+  try {
+    await Promise.all([
+      configurationTypeStore.loadConfigurationTypes(),
+      benchmarkStore.loadBenchmarks(),
+      strategyTypeStore.loadStrategyTypes()
+    ])
+    searchProducts()
+  } catch (err: any) {
+    showError(err.message || '加载数据失败')
+  }
 })
 
-// 加载策略类型列表
-const loadStrategyTypes = async () => {
+// 大分类变化：清空后续选项，刷新下级下拉列表，搜索产品
+const handleMajorTypeChange = async () => {
+  selectedSubType.value = undefined
+  selectedBenchmark.value = undefined
+  selectedStrategyType.value = undefined
+  currentPage.value = 1
   try {
-    await strategyTypeStore.loadStrategyTypes()
-  } catch (err: any) {
-    showError(err.message || '加载策略类型失败')
-  }
-}
-
-// 策略类型筛选变化处理
-const handleStrategyTypeChange = () => {
-  if (selectedStrategyType.value) {
-    loadProducts()
-  } else {
+    if (selectedMajorType.value) {
+      // 选了大分类，加载该分类下的策略类型
+      await strategyTypeStore.loadStrategyTypes({ majorTypeId: selectedMajorType.value })
+    } else {
+      await strategyTypeStore.loadStrategyTypes()
+    }
     searchProducts()
-  }
-}
-
-// 按策略类型加载产品列表
-const loadProducts = async () => {
-  if (!selectedStrategyType.value) return
-  try {
-    await productStore.loadByStrategyTypeId(selectedStrategyType.value, {
-      page: currentPage.value - 1,
-      size: pageSize.value
-    })
   } catch (err: any) {
-    showError(err.message || '加载产品失败')
+    showError(err.message || '加载数据失败')
   }
 }
 
-// 按条件搜索产品
+// 子分类变化：清空后续选项，刷新下级下拉列表，搜索产品
+const handleSubTypeChange = async () => {
+  selectedBenchmark.value = undefined
+  selectedStrategyType.value = undefined
+  currentPage.value = 1
+  try {
+    if (selectedSubType.value) {
+      await strategyTypeStore.loadStrategyTypes({ subTypeId: selectedSubType.value })
+    } else if (selectedMajorType.value) {
+      await strategyTypeStore.loadStrategyTypes({ majorTypeId: selectedMajorType.value })
+    } else {
+      await strategyTypeStore.loadStrategyTypes()
+    }
+    searchProducts()
+  } catch (err: any) {
+    showError(err.message || '加载数据失败')
+  }
+}
+
+// 业绩对标变化：清空后续选项，刷新策略类型列表，搜索产品
+const handleBenchmarkChange = async () => {
+  selectedStrategyType.value = undefined
+  currentPage.value = 1
+  try {
+    if (selectedBenchmark.value) {
+      await strategyTypeStore.loadByBenchmarkId(selectedBenchmark.value)
+    } else if (selectedSubType.value) {
+      await strategyTypeStore.loadStrategyTypes({ subTypeId: selectedSubType.value })
+    } else if (selectedMajorType.value) {
+      await strategyTypeStore.loadStrategyTypes({ majorTypeId: selectedMajorType.value })
+    } else {
+      await strategyTypeStore.loadStrategyTypes()
+    }
+    searchProducts()
+  } catch (err: any) {
+    showError(err.message || '加载数据失败')
+  }
+}
+
+// 策略类型变化：搜索产品
+const handleStrategyTypeChange = () => {
+  currentPage.value = 1
+  searchProducts()
+}
+
+// 收集当前选中层级对应的策略类型ID列表
+const collectStrategyTypeIds = (): number[] | undefined => {
+  // 如果选了具体策略类型，只返回这一个
+  if (selectedStrategyType.value) {
+    return [Number(selectedStrategyType.value)]
+  }
+  // 否则取当前策略类型下拉列表中可见的所有ID
+  const visibleStrategyTypes = strategyTypes.value
+  if (visibleStrategyTypes.length === 0) return undefined
+  return visibleStrategyTypes.map((st) => Number(st.id))
+}
+
+// 统一搜索产品：选择框筛选 + 名称/代码过滤
 const searchProducts = async () => {
   try {
-    await productStore.searchProducts({
-      ...searchForm.value,
+    const params: Record<string, any> = {
+      name: searchForm.value.name || undefined,
+      code: searchForm.value.code || undefined,
       page: currentPage.value - 1,
       size: pageSize.value
-    })
+    }
+    const ids = collectStrategyTypeIds()
+    if (ids) {
+      params.strategyTypeIds = ids
+    }
+    await productStore.searchProducts(params)
   } catch (err: any) {
     showError(err.message || '搜索产品失败')
   }
@@ -241,35 +315,28 @@ const handleSearch = () => {
   searchProducts()
 }
 
-// 重置搜索条件
+// 重置搜索条件（仅重置名称和代码输入框）
 const handleReset = () => {
-  searchForm.value = {
-    name: '',
-    code: '',
-    riskLevel: '',
-    isActive: undefined
-  }
+  searchForm.value = { name: '', code: '' }
   currentPage.value = 1
   searchProducts()
 }
 
 // 刷新数据
-const handleRefresh = () => {
-  if (selectedStrategyType.value) {
-    loadProducts()
-  } else {
-    searchProducts()
-  }
+const handleRefresh = async () => {
+  await searchProducts()
 }
 
-// 新增产品
+// 新增产品（需要选择策略类型）
 const handleAdd = () => {
+  if (!selectedStrategyType.value) {
+    showError('请先选择策略类型')
+    return
+  }
   isEdit.value = false
   dialogTitle.value = '新增产品'
   formData.value = {
-    strategyTypeId: selectedStrategyType.value!,
-    riskLevel: '中等风险',
-    isActive: true,
+    strategyTypeId: selectedStrategyType.value,
     sortOrder: 0
   }
   dialogVisible.value = true
@@ -288,6 +355,7 @@ const handleDelete = async (data: ProductDTO) => {
   if (await confirmDelete(`确定要删除 "${data.name}" 吗？`)) {
     try {
       await productStore.remove(data.id)
+      await handleRefresh()
       success('删除成功')
     } catch (err: any) {
       showError(err.message || '删除失败')
@@ -302,38 +370,20 @@ const handleConfirm = async () => {
       await productStore.update(formData.value.id!, {
         name: formData.value.name!,
         description: formData.value.description,
-        riskLevel: formData.value.riskLevel!,
-        annualReturn: formData.value.annualReturn,
-        volatility: formData.value.volatility,
-        sharpeRatio: formData.value.sharpeRatio,
-        maxDrawdown: formData.value.maxDrawdown,
-        fundManager: formData.value.fundManager,
-        fundScale: formData.value.fundScale,
-        inceptionDate: formData.value.inceptionDate,
-        isActive: formData.value.isActive,
         sortOrder: formData.value.sortOrder
       })
-      success('更新成功')
     } else {
       await productStore.create({
         name: formData.value.name!,
         code: formData.value.code!,
         strategyTypeId: formData.value.strategyTypeId!,
-        riskLevel: formData.value.riskLevel!,
-        annualReturn: formData.value.annualReturn,
-        volatility: formData.value.volatility,
-        sharpeRatio: formData.value.sharpeRatio,
-        maxDrawdown: formData.value.maxDrawdown,
-        fundManager: formData.value.fundManager,
-        fundScale: formData.value.fundScale,
-        inceptionDate: formData.value.inceptionDate,
         description: formData.value.description,
-        isActive: formData.value.isActive!,
         sortOrder: formData.value.sortOrder || 0
       })
-      success('创建成功')
     }
     dialogVisible.value = false
+    handleRefresh()
+    success(isEdit.value ? '更新成功' : '创建成功')
   } catch (err: any) {
     showError(err.message || isEdit.value ? '更新失败' : '创建失败')
   }
@@ -342,24 +392,6 @@ const handleConfirm = async () => {
 // 排序变化处理
 const handleSortChange = () => {
   // 排序变化处理
-}
-
-// 根据风险等级获取标签类型
-const getRiskTagType = (level: string) => {
-  const map: Record<string, any> = {
-    低风险: 'success',
-    中低风险: 'primary',
-    中等风险: 'warning',
-    中高风险: 'danger',
-    高风险: 'danger'
-  }
-  return map[level] || 'info'
-}
-
-// 格式化百分比（小数转百分数字符串）
-const formatPercent = (value?: number) => {
-  if (value === undefined || value === null) return '-'
-  return `${(value * 100).toFixed(2)}%`
 }
 
 // 判断是否可以上移
@@ -380,9 +412,9 @@ const handleMoveUp = async (data: ProductDTO) => {
     try {
       await productStore.update(data.id, {
         name: data.name,
-        riskLevel: data.riskLevel,
         sortOrder: (data.sortOrder || 0) - 1
       })
+      await handleRefresh()
       success('排序更新成功')
     } catch (err: any) {
       showError(err.message || '排序更新失败')
@@ -396,9 +428,9 @@ const handleMoveDown = async (data: ProductDTO) => {
     try {
       await productStore.update(data.id, {
         name: data.name,
-        riskLevel: data.riskLevel,
         sortOrder: (data.sortOrder || 0) + 1
       })
+      await handleRefresh()
       success('排序更新成功')
     } catch (err: any) {
       showError(err.message || '排序更新失败')

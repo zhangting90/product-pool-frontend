@@ -4,7 +4,7 @@
  */
 export interface ProductPoolVO {
   /** 配置类型ID */
-  configurationTypeId: number
+  configurationTypeId: string
   /** 配置类型名称 */
   configurationTypeName: string
   /** 配置类型编码 */
@@ -12,7 +12,7 @@ export interface ProductPoolVO {
   /** 是否为大分类 */
   isMajor: boolean
   /** 父分类ID */
-  parentId?: number
+  parentId?: string
   /** 排序序号 */
   sortOrder?: number
   /** 子分类列表 */
@@ -26,7 +26,7 @@ export interface ProductPoolVO {
  */
 export interface ConfigurationTypeVO {
   /** 主键ID */
-  id: number
+  id: string
   /** 配置类型名称 */
   name: string
   /** 配置类型编码 */
@@ -42,7 +42,7 @@ export interface ConfigurationTypeVO {
  */
 export interface BenchmarkVO {
   /** 主键ID */
-  id: number
+  id: string
   /** 业绩对标名称 */
   name: string
   /** 业绩对标编码 */
@@ -58,7 +58,7 @@ export interface BenchmarkVO {
  */
 export interface StrategyTypeVO {
   /** 主键ID */
-  id: number
+  id: string
   /** 策略类型名称 */
   name: string
   /** 策略类型描述 */
@@ -74,13 +74,13 @@ export interface StrategyTypeVO {
  */
 export interface ProductDTO {
   /** 主键ID */
-  id: number
+  id: string
   /** 产品名称 */
   name: string
   /** 产品编码 */
   code: string
   /** 所属策略类型ID */
-  strategyTypeId: number
+  strategyTypeId: string
   /** 所属策略类型名称 */
   strategyTypeName?: string
   /** 风险等级 */

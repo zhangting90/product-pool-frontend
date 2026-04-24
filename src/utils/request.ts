@@ -2,7 +2,7 @@
  * Axios 请求封装
  * 基于axios创建统一请求实例，包含请求/响应拦截器、Token注入、错误统一处理
  */
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig, type AxiosResponse } from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 /** axios请求实例，配置基础URL、超时时间和默认请求头 */

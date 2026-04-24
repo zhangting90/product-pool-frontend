@@ -3,36 +3,18 @@
  * 包含产品DTO、创建DTO、更新DTO，以及通用分页结果类型
  */
 export interface ProductDTO {
-  /** 主键ID */
-  id: number
+  /** 主键ID（产品编码） */
+  id: string
   /** 产品名称 */
   name: string
   /** 产品编码 */
   code: string
   /** 所属策略类型ID */
-  strategyTypeId: number
+  strategyTypeId: string
   /** 所属策略类型名称 */
   strategyTypeName?: string
-  /** 风险等级 */
-  riskLevel: string
-  /** 年化收益率 */
-  annualReturn?: number
-  /** 波动率 */
-  volatility?: number
-  /** 夏普比率 */
-  sharpeRatio?: number
-  /** 最大回撤 */
-  maxDrawdown?: number
-  /** 基金经理 */
-  fundManager?: string
-  /** 基金规模 */
-  fundScale?: number
-  /** 成立日期 */
-  inceptionDate?: string
   /** 产品描述 */
   description?: string
-  /** 是否启用 */
-  isActive: boolean
   /** 排序序号 */
   sortOrder?: number
   /** 创建时间 */
@@ -50,27 +32,9 @@ export interface ProductCreateDTO {
   /** 产品编码 */
   code: string
   /** 所属策略类型ID */
-  strategyTypeId: number
-  /** 风险等级 */
-  riskLevel: string
-  /** 年化收益率 */
-  annualReturn?: number
-  /** 波动率 */
-  volatility?: number
-  /** 夏普比率 */
-  sharpeRatio?: number
-  /** 最大回撤 */
-  maxDrawdown?: number
-  /** 基金经理 */
-  fundManager?: string
-  /** 基金规模 */
-  fundScale?: number
-  /** 成立日期 */
-  inceptionDate?: string
+  strategyTypeId: string
   /** 产品描述 */
   description?: string
-  /** 是否启用 */
-  isActive?: boolean
   /** 排序序号 */
   sortOrder?: number
 }
@@ -83,24 +47,6 @@ export interface ProductUpdateDTO {
   name: string
   /** 产品描述 */
   description?: string
-  /** 风险等级 */
-  riskLevel: string
-  /** 年化收益率 */
-  annualReturn?: number
-  /** 波动率 */
-  volatility?: number
-  /** 夏普比率 */
-  sharpeRatio?: number
-  /** 最大回撤 */
-  maxDrawdown?: number
-  /** 基金经理 */
-  fundManager?: string
-  /** 基金规模 */
-  fundScale?: number
-  /** 成立日期 */
-  inceptionDate?: string
-  /** 是否启用 */
-  isActive?: boolean
   /** 排序序号 */
   sortOrder?: number
 }

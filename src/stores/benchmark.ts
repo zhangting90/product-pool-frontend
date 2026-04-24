@@ -19,7 +19,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
    * 加载所有业绩对标
    * @param configurationTypeId - 可选，按配置类型ID筛选
    */
-  const loadBenchmarks = async (configurationTypeId?: number) => {
+  const loadBenchmarks = async (configurationTypeId?: string) => {
     loading.value = true
     error.value = null
     try {
@@ -36,7 +36,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
    * 根据配置类型ID加载业绩对标
    * @param configurationTypeId - 配置类型ID
    */
-  const loadByConfigurationTypeId = async (configurationTypeId: number) => {
+  const loadByConfigurationTypeId = async (configurationTypeId: string) => {
     loading.value = true
     error.value = null
     try {
@@ -54,7 +54,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
    * @param id - 业绩对标ID
    * @returns 业绩对标详情
    */
-  const getById = async (id: number) => {
+  const getById = async (id: string) => {
     try {
       return await benchmarkApi.getBenchmarkById(id)
     } catch (err: any) {
@@ -85,7 +85,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
    * @param data - 更新业绩对标请求体
    * @returns 更新后的业绩对标
    */
-  const update = async (id: number, data: BenchmarkUpdateDTO) => {
+  const update = async (id: string, data: BenchmarkUpdateDTO) => {
     try {
       const result = await benchmarkApi.updateBenchmark(id, data)
       const index = benchmarks.value.findIndex((b) => b.id === id)
@@ -103,7 +103,7 @@ export const useBenchmarkStore = defineStore('benchmark', () => {
    * 删除业绩对标
    * @param id - 业绩对标ID
    */
-  const remove = async (id: number) => {
+  const remove = async (id: string) => {
     try {
       await benchmarkApi.deleteBenchmark(id)
       benchmarks.value = benchmarks.value.filter((b) => b.id !== id)

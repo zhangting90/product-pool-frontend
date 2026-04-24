@@ -10,7 +10,7 @@ import type { BenchmarkDTO, BenchmarkCreateDTO, BenchmarkUpdateDTO } from '@/typ
  * @param configurationTypeId - 可选，按配置类型ID筛选
  * @returns 业绩对标列表
  */
-export const getBenchmarks = (configurationTypeId?: number) => {
+export const getBenchmarks = (configurationTypeId?: string) => {
   return request<BenchmarkDTO[]>({
     url: '/api/v1/benchmarks',
     method: 'get',
@@ -23,7 +23,7 @@ export const getBenchmarks = (configurationTypeId?: number) => {
  * @param id - 业绩对标ID
  * @returns 业绩对标详情
  */
-export const getBenchmarkById = (id: number) => {
+export const getBenchmarkById = (id: string) => {
   return request<BenchmarkDTO>({
     url: `/api/v1/benchmarks/${id}`,
     method: 'get'
@@ -35,7 +35,7 @@ export const getBenchmarkById = (id: number) => {
  * @param configurationTypeId - 配置类型ID
  * @returns 业绩对标列表
  */
-export const getBenchmarksByConfigurationTypeId = (configurationTypeId: number) => {
+export const getBenchmarksByConfigurationTypeId = (configurationTypeId: string) => {
   return request<BenchmarkDTO[]>({
     url: `/api/v1/benchmarks/configuration-types/${configurationTypeId}`,
     method: 'get'
@@ -61,7 +61,7 @@ export const createBenchmark = (data: BenchmarkCreateDTO) => {
  * @param data - 更新业绩对标请求体
  * @returns 更新后的业绩对标
  */
-export const updateBenchmark = (id: number, data: BenchmarkUpdateDTO) => {
+export const updateBenchmark = (id: string, data: BenchmarkUpdateDTO) => {
   return request<BenchmarkDTO>({
     url: `/api/v1/benchmarks/${id}`,
     method: 'put',
@@ -73,7 +73,7 @@ export const updateBenchmark = (id: number, data: BenchmarkUpdateDTO) => {
  * 删除业绩对标
  * @param id - 业绩对标ID
  */
-export const deleteBenchmark = (id: number) => {
+export const deleteBenchmark = (id: string) => {
   return request({
     url: `/api/v1/benchmarks/${id}`,
     method: 'delete'

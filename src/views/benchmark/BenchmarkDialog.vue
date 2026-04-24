@@ -5,39 +5,36 @@
     v-model="formData"
     :title="title"
     :rules="formRules"
-    @confirm="handleConfirm"
+    @submit="handleConfirm"
   >
-    <!-- 业绩对标名称 -->
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="formData.name" placeholder="请输入业绩对标名称" />
-    </el-form-item>
+    <template #form>
+      <!-- 业绩对标名称 -->
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="formData.name" placeholder="请输入业绩对标名称" />
+      </el-form-item>
 
-    <!-- 业绩对标代码（新增时显示） -->
-    <el-form-item label="代码" prop="code" v-if="!isEdit">
-      <el-input v-model="formData.code" placeholder="请输入业绩对标代码" />
-    </el-form-item>
+      <!-- 所属配置类型选择 -->
+      <el-form-item label="配置类型" prop="configurationTypeId">
+        <el-select
+          v-model="formData.configurationTypeId"
+          placeholder="请选择配置类型"
+          style="width: 100%"
+          :disabled="isEdit"
+        >
+          <el-option v-for="ct in configurationTypes" :key="ct.id" :label="ct.name" :value="ct.id" />
+        </el-select>
+      </el-form-item>
 
-    <!-- 所属配置类型选择 -->
-    <el-form-item label="配置类型" prop="configurationTypeId">
-      <el-select
-        v-model="formData.configurationTypeId"
-        placeholder="请选择配置类型"
-        style="width: 100%"
-        :disabled="isEdit"
-      >
-        <el-option v-for="ct in configurationTypes" :key="ct.id" :label="ct.name" :value="ct.id" />
-      </el-select>
-    </el-form-item>
+      <!-- 描述信息 -->
+      <el-form-item label="描述">
+        <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入描述" />
+      </el-form-item>
 
-    <!-- 描述信息 -->
-    <el-form-item label="描述">
-      <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入描述" />
-    </el-form-item>
-
-    <!-- 排序号 -->
-    <el-form-item label="排序">
-      <el-input-number v-model="formData.sortOrder" :min="0" :step="1" />
-    </el-form-item>
+      <!-- 排序号 -->
+      <el-form-item label="排序">
+        <el-input-number v-model="formData.sortOrder" :min="0" :step="1" />
+      </el-form-item>
+    </template>
   </FormDialog>
 </template>
 
@@ -78,25 +75,25 @@ const formData = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-// 配置类型列表（大分类）
-const configurationTypes = computed(() => configurationTypeStore.majorTypes)
+// 配置类型列表（子分类）
+const configurationTypes = computed(() => configurationTypeStore.subTypes)
 
 // 表单验证规则
 const formRules = {
   name: [{ required: true, message: '请输入业绩对标名称', trigger: 'blur' }],
-  code: [{ required: true, message: '请输入业绩对标代码', trigger: 'blur' }],
   configurationTypeId: [{ required: true, message: '请选择配置类型', trigger: 'change' }]
 }
 
-// 页面挂载时加载配置类型数据
+// 页面挂载时加载所有配置类型数据
 onMounted(() => {
   if (configurationTypes.value.length === 0) {
-    configurationTypeStore.loadMajorTypes()
+    configurationTypeStore.loadConfigurationTypes()
   }
 })
 
-// 触发确认事件
-const handleConfirm = () => {
+// 触发确认事件，将FormDialog内部表单数据同步回父组件
+const handleConfirm = (data: Record<string, any>) => {
+  emit('update:modelValue', data as Partial<BenchmarkDTO>)
   emit('confirm')
 }
 </script>

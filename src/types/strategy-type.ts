@@ -4,13 +4,13 @@
  */
 export interface StrategyTypeDTO {
   /** 主键ID */
-  id: number
+  id: string
   /** 策略类型名称 */
   name: string
   /** 策略类型描述 */
   description?: string
   /** 所属业绩对标ID */
-  benchmarkId: number
+  benchmarkId: string
   /** 所属业绩对标名称 */
   benchmarkName?: string
   /** 排序序号 */
@@ -32,7 +32,7 @@ export interface StrategyTypeCreateDTO {
   /** 策略类型描述 */
   description?: string
   /** 所属业绩对标ID */
-  benchmarkId: number
+  benchmarkId: string
   /** 排序序号 */
   sortOrder?: number
 }
@@ -54,13 +54,13 @@ export interface StrategyTypeUpdateDTO {
  */
 export interface ProductDTO {
   /** 主键ID */
-  id: number
+  id: string
   /** 产品名称 */
   name: string
   /** 产品编码 */
   code: string
   /** 所属策略类型ID */
-  strategyTypeId: number
+  strategyTypeId: string
   /** 所属策略类型名称 */
   strategyTypeName?: string
   /** 风险等级 */

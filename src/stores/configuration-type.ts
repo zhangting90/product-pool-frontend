@@ -79,7 +79,7 @@ export const useConfigurationTypeStore = defineStore('configurationType', () => 
    * @param id - 配置类型ID
    * @returns 配置类型详情
    */
-  const getById = async (id: number) => {
+  const getById = async (id: string) => {
     try {
       return await configurationTypeApi.getConfigurationTypeById(id)
     } catch (err: any) {
@@ -93,7 +93,7 @@ export const useConfigurationTypeStore = defineStore('configurationType', () => 
    * @param parentId - 父分类ID
    * @returns 子分类列表
    */
-  const getByParentId = async (parentId: number) => {
+  const getByParentId = async (parentId: string) => {
     try {
       return await configurationTypeApi.getConfigurationTypesByParentId(parentId)
     } catch (err: any) {
@@ -124,7 +124,7 @@ export const useConfigurationTypeStore = defineStore('configurationType', () => 
    * @param data - 更新配置类型请求体
    * @returns 更新后的配置类型
    */
-  const update = async (id: number, data: ConfigurationTypeUpdateDTO) => {
+  const update = async (id: string, data: ConfigurationTypeUpdateDTO) => {
     try {
       const result = await configurationTypeApi.updateConfigurationType(id, data)
       const index = configurationTypes.value.findIndex((ct) => ct.id === id)
@@ -142,7 +142,7 @@ export const useConfigurationTypeStore = defineStore('configurationType', () => 
    * 删除配置类型
    * @param id - 配置类型ID
    */
-  const remove = async (id: number) => {
+  const remove = async (id: string) => {
     try {
       await configurationTypeApi.deleteConfigurationType(id)
       configurationTypes.value = configurationTypes.value.filter((ct) => ct.id !== id)

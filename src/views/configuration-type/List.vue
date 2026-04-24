@@ -24,14 +24,12 @@
         node-key="id"
         default-expand-all
         :expand-on-click-node="false"
-        :filter-node-method="filterNode"
         ref="treeRef"
       >
         <!-- 自定义树节点内容 -->
         <template #default="{ node, data }">
           <div class="tree-node">
             <span class="node-label">{{ node.label }}</span>
-            <span class="node-code">({{ data.code }})</span>
             <span v-if="data.description" class="node-desc">{{ data.description }}</span>
             <!-- 节点操作按钮 -->
             <div class="node-actions">
@@ -156,6 +154,7 @@ const handleDelete = async (data: ConfigurationTypeDTO) => {
   if (await confirmDelete(`确定要删除 "${data.name}" 吗？`)) {
     try {
       await configurationTypeStore.remove(data.id)
+      await loadData()
       success('删除成功')
     } catch (err: any) {
       showError(err.message || '删除失败')
@@ -172,19 +171,18 @@ const handleConfirm = async () => {
         description: formData.value.description,
         sortOrder: formData.value.sortOrder
       })
-      success('更新成功')
     } else {
       await configurationTypeStore.create({
         name: formData.value.name!,
-        code: formData.value.code!,
         description: formData.value.description,
         isMajor: formData.value.isMajor!,
         parentId: formData.value.parentId,
         sortOrder: formData.value.sortOrder || 0
       })
-      success('创建成功')
     }
     dialogVisible.value = false
+    await loadData()
+    success(isEdit.value ? '更新成功' : '创建成功')
   } catch (err: any) {
     showError(err.message || isEdit.value ? '更新失败' : '创建失败')
   }
@@ -230,6 +228,7 @@ const handleMoveUp = async (data: ConfigurationTypeDTO) => {
         name: data.name,
         sortOrder: (data.sortOrder || 0) - 1
       })
+      await loadData()
       success('排序更新成功')
     } catch (err: any) {
       showError(err.message || '排序更新失败')
@@ -245,6 +244,7 @@ const handleMoveDown = async (data: ConfigurationTypeDTO) => {
         name: data.name,
         sortOrder: (data.sortOrder || 0) + 1
       })
+      await loadData()
       success('排序更新成功')
     } catch (err: any) {
       showError(err.message || '排序更新失败')

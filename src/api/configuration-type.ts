@@ -25,7 +25,7 @@ export const getConfigurationTypes = () => {
  * @param id - 配置类型ID
  * @returns 配置类型详情
  */
-export const getConfigurationTypeById = (id: number) => {
+export const getConfigurationTypeById = (id: string) => {
   return request<ConfigurationTypeDTO>({
     url: `/api/v1/configuration-types/${id}`,
     method: 'get'
@@ -37,7 +37,7 @@ export const getConfigurationTypeById = (id: number) => {
  * @param parentId - 父分类ID
  * @returns 子分类列表
  */
-export const getConfigurationTypesByParentId = (parentId: number) => {
+export const getConfigurationTypesByParentId = (parentId: string) => {
   return request<ConfigurationTypeDTO[]>({
     url: `/api/v1/configuration-types/${parentId}/children`,
     method: 'get'
@@ -85,7 +85,7 @@ export const createConfigurationType = (data: ConfigurationTypeCreateDTO) => {
  * @param data - 更新配置类型请求体
  * @returns 更新后的配置类型
  */
-export const updateConfigurationType = (id: number, data: ConfigurationTypeUpdateDTO) => {
+export const updateConfigurationType = (id: string, data: ConfigurationTypeUpdateDTO) => {
   return request<ConfigurationTypeDTO>({
     url: `/api/v1/configuration-types/${id}`,
     method: 'put',
@@ -97,7 +97,7 @@ export const updateConfigurationType = (id: number, data: ConfigurationTypeUpdat
  * 删除配置类型
  * @param id - 配置类型ID
  */
-export const deleteConfigurationType = (id: number) => {
+export const deleteConfigurationType = (id: string) => {
   return request({
     url: `/api/v1/configuration-types/${id}`,
     method: 'delete'

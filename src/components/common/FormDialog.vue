@@ -102,18 +102,15 @@ watch(dialogVisible, (val) => {
   emit('update:visible', val)
 })
 
-// 监听内部表单数据变化，向外部同步
-watch(
-  formData,
-  (val) => {
-    emit('update:modelValue', val)
-  },
-  { deep: true }
-)
+// 表单数据变化时同步到外部（通过 submit 事件传递最终数据）
+// 注意：不再使用 deep watch 监听 formData 变化后 emit update:modelValue，
+// 因为这会与 props.modelValue 的 deep watch 形成无限递归循环
 
 // 对话框打开回调
 const handleOpen = async () => {
+  formData.value = { ...props.modelValue }
   await nextTick()
+  formRef.value?.clearValidate()
   emit('open')
 }
 

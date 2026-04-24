@@ -5,34 +5,36 @@
     v-model="formData"
     :title="title"
     :rules="formRules"
-    @confirm="handleConfirm"
+    @submit="handleConfirm"
   >
-    <!-- 策略类型名称 -->
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="formData.name" placeholder="请输入策略类型名称" />
-    </el-form-item>
+    <template #form>
+      <!-- 策略类型名称 -->
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="formData.name" placeholder="请输入策略类型名称" />
+      </el-form-item>
 
-    <!-- 所属业绩对标选择（编辑时禁用） -->
-    <el-form-item label="业绩对标" prop="benchmarkId">
-      <el-select
-        v-model="formData.benchmarkId"
-        placeholder="请选择业绩对标"
-        style="width: 100%"
-        :disabled="isEdit"
-      >
-        <el-option v-for="bm in benchmarks" :key="bm.id" :label="bm.name" :value="bm.id" />
-      </el-select>
-    </el-form-item>
+      <!-- 所属业绩对标选择（编辑时禁用） -->
+      <el-form-item label="业绩对标" prop="benchmarkId">
+        <el-select
+          v-model="formData.benchmarkId"
+          placeholder="请选择业绩对标"
+          style="width: 100%"
+          :disabled="isEdit"
+        >
+          <el-option v-for="bm in benchmarks" :key="bm.id" :label="bm.name" :value="bm.id" />
+        </el-select>
+      </el-form-item>
 
-    <!-- 描述信息 -->
-    <el-form-item label="描述">
-      <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入描述" />
-    </el-form-item>
+      <!-- 描述信息 -->
+      <el-form-item label="描述">
+        <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入描述" />
+      </el-form-item>
 
-    <!-- 排序号 -->
-    <el-form-item label="排序">
-      <el-input-number v-model="formData.sortOrder" :min="0" :step="1" />
-    </el-form-item>
+      <!-- 排序号 -->
+      <el-form-item label="排序">
+        <el-input-number v-model="formData.sortOrder" :min="0" :step="1" />
+      </el-form-item>
+    </template>
   </FormDialog>
 </template>
 
@@ -89,8 +91,9 @@ onMounted(() => {
   }
 })
 
-// 触发确认事件
-const handleConfirm = () => {
+// 触发确认事件，将FormDialog内部表单数据同步回父组件
+const handleConfirm = (data: Record<string, any>) => {
+  emit('update:modelValue', data as Partial<StrategyTypeDTO>)
   emit('confirm')
 }
 </script>

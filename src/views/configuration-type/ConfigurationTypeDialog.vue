@@ -5,32 +5,29 @@
     v-model="formData"
     :title="title"
     :rules="formRules"
-    @confirm="handleConfirm"
+    @submit="handleConfirm"
   >
-    <!-- 配置类型名称 -->
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="formData.name" placeholder="请输入配置类型名称" />
-    </el-form-item>
+    <template #form>
+      <!-- 配置类型名称 -->
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="formData.name" placeholder="请输入配置类型名称" />
+      </el-form-item>
 
-    <!-- 配置类型代码（新增时显示） -->
-    <el-form-item label="代码" prop="code" v-if="!isEdit">
-      <el-input v-model="formData.code" placeholder="请输入配置类型代码" />
-    </el-form-item>
+      <!-- 描述信息 -->
+      <el-form-item label="描述">
+        <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入描述" />
+      </el-form-item>
 
-    <!-- 描述信息 -->
-    <el-form-item label="描述">
-      <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入描述" />
-    </el-form-item>
+      <!-- 父分类显示（编辑子类时展示） -->
+      <el-form-item v-if="formData.parentId" label="父分类">
+        <el-input :value="getParentName()" disabled />
+      </el-form-item>
 
-    <!-- 父分类显示（编辑子类时展示） -->
-    <el-form-item v-if="formData.parentId" label="父分类">
-      <el-input :value="getParentName()" disabled />
-    </el-form-item>
-
-    <!-- 排序号 -->
-    <el-form-item label="排序">
-      <el-input-number v-model="formData.sortOrder" :min="0" :step="1" />
-    </el-form-item>
+      <!-- 排序号 -->
+      <el-form-item label="排序">
+        <el-input-number v-model="formData.sortOrder" :min="0" :step="1" />
+      </el-form-item>
+    </template>
   </FormDialog>
 </template>
 
@@ -73,8 +70,7 @@ const formData = computed({
 
 // 表单验证规则
 const formRules = {
-  name: [{ required: true, message: '请输入配置类型名称', trigger: 'blur' }],
-  code: [{ required: true, message: '请输入配置类型代码', trigger: 'blur' }]
+  name: [{ required: true, message: '请输入配置类型名称', trigger: 'blur' }]
 }
 
 // 获取父分类名称
@@ -86,8 +82,9 @@ const getParentName = () => {
   return parent?.name || ''
 }
 
-// 触发确认事件
-const handleConfirm = () => {
+// 触发确认事件，将FormDialog内部表单数据同步回父组件
+const handleConfirm = (data: Record<string, any>) => {
+  emit('update:modelValue', data as Partial<ConfigurationTypeDTO>)
   emit('confirm')
 }
 </script>

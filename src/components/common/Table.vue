@@ -37,8 +37,8 @@
     <!-- 分页组件 -->
     <div v-if="pagination && total > 0" class="pagination-container">
       <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
+        v-model:current-page="innerCurrentPage"
+        v-model:page-size="innerPageSize"
         :page-sizes="pageSizes"
         :total="total"
         :layout="paginationLayout"
@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 // 表格属性定义
 interface Props {
@@ -115,9 +115,17 @@ const emit = defineEmits<Emits>()
 // 表格数据计算属性
 const tableData = computed(() => props.data)
 
+// 分页状态：使用本地 ref 避免直接修改 props
+const innerCurrentPage = ref(props.currentPage)
+const innerPageSize = ref(props.pageSize)
+
+// 监听 props 变化同步到本地 ref
+watch(() => props.currentPage, (val) => { innerCurrentPage.value = val })
+watch(() => props.pageSize, (val) => { innerPageSize.value = val })
+
 // 序号计算方法，结合分页偏移
 const indexMethod = (index: number) => {
-  return index + 1 + (props.currentPage - 1) * props.pageSize
+  return index + 1 + (innerCurrentPage.value - 1) * innerPageSize.value
 }
 
 // 排序变化事件
@@ -147,11 +155,13 @@ const handleRowDblclick = (row: any, column: any, event: Event) => {
 
 // 每页条数变化事件
 const handleSizeChange = (size: number) => {
+  innerPageSize.value = size
   emit('update:pageSize', size)
 }
 
 // 页码变化事件
 const handleCurrentPageChange = (page: number) => {
+  innerCurrentPage.value = page
   emit('update:currentPage', page)
 }
 </script>
