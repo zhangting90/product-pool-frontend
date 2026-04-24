@@ -47,7 +47,9 @@ request.interceptors.response.use(
   (error: AxiosError) => {
     // HTTP状态码错误处理
     if (error.response) {
-      const { status } = error.response
+      const { status, data } = error.response
+      // 优先使用后端返回的中文错误消息
+      const message = data?.message
 
       switch (status) {
         // 401未授权：提示重新登录
@@ -63,18 +65,22 @@ request.interceptors.response.use(
           break
         // 403禁止访问
         case 403:
-          ElMessage.error('没有权限访问')
+          ElMessage.error(message || '没有权限访问')
           break
         // 404资源不存在
         case 404:
-          ElMessage.error('请求的资源不存在')
+          ElMessage.error(message || '请求的资源不存在')
+          break
+        // 409资源冲突
+        case 409:
+          ElMessage.error(message || '资源数据冲突')
           break
         // 500服务器内部错误
         case 500:
-          ElMessage.error('服务器错误')
+          ElMessage.error(message || '服务器内部错误')
           break
         default:
-          ElMessage.error(error.message || '请求失败')
+          ElMessage.error(message || error.message || '请求失败')
       }
     } else if (error.request) {
       // 请求已发出但未收到响应

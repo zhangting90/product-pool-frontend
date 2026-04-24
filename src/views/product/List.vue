@@ -1,24 +1,35 @@
-<!-- 产品管理页面：分类→业绩对标→策略类型三级联动筛选，任何条件变化均触发后端查询 -->
+<!-- 产品管理页面：大分类→子分类→业绩对标→策略类型四级联动筛选，任何条件变化均触发后端查询 -->
 <template>
   <div class="product-list">
-    <!-- 页面头部：标题、三级筛选和操作按钮 -->
+    <!-- 页面头部：标题、四级筛选和操作按钮 -->
     <div class="header">
       <h2>产品管理</h2>
       <div class="header-actions">
-        <!-- 分类下拉框 -->
+        <!-- 大分类下拉框 -->
         <el-select
-          v-model="selectedConfigurationType"
-          placeholder="选择分类"
+          v-model="selectedMajorType"
+          placeholder="选择大分类"
           clearable
-          @change="handleConfigurationTypeChange"
-          style="width: 180px"
+          @change="handleMajorTypeChange"
+          style="width: 160px"
         >
           <el-option
-            v-for="ct in configurationTypes"
+            v-for="ct in majorTypes"
             :key="ct.id"
             :label="ct.name"
             :value="ct.id"
           />
+        </el-select>
+        <!-- 子分类下拉框 -->
+        <el-select
+          v-model="selectedSubType"
+          placeholder="选择子分类"
+          clearable
+          @change="handleSubTypeChange"
+          style="width: 160px"
+          :disabled="!selectedMajorType"
+        >
+          <el-option v-for="ct in subTypes" :key="ct.id" :label="ct.name" :value="ct.id" />
         </el-select>
         <!-- 业绩对标下拉框 -->
         <el-select
@@ -26,8 +37,8 @@
           placeholder="选择业绩对标"
           clearable
           @change="handleBenchmarkChange"
-          style="width: 180px"
-          :disabled="!selectedConfigurationType"
+          style="width: 160px"
+          :disabled="!selectedSubType"
         >
           <el-option v-for="bm in benchmarks" :key="bm.id" :label="bm.name" :value="bm.id" />
         </el-select>
@@ -37,7 +48,7 @@
           placeholder="选择策略类型"
           clearable
           @change="handleStrategyTypeChange"
-          style="width: 180px"
+          style="width: 160px"
           :disabled="!selectedBenchmark"
         >
           <el-option
@@ -140,12 +151,14 @@ const { success, error: showError } = useMessage()
 const { confirmDelete } = useConfirm()
 
 // ============ 下拉框数据源 ============
-const configurationTypes = ref<ConfigurationTypeDTO[]>([])
+const majorTypes = ref<ConfigurationTypeDTO[]>([])
+const subTypes = ref<ConfigurationTypeDTO[]>([])
 const benchmarks = ref<BenchmarkDTO[]>([])
 const strategyTypes = ref<StrategyTypeDTO[]>([])
 
 // ============ 当前选中值 ============
-const selectedConfigurationType = ref<string>()
+const selectedMajorType = ref<string>()
+const selectedSubType = ref<string>()
 const selectedBenchmark = ref<string>()
 const selectedStrategyType = ref<string>()
 
@@ -170,30 +183,48 @@ const products = computed(() => productStore.products)
 const loading = computed(() => productStore.loading)
 const total = computed(() => productStore.pageResult.totalElements)
 
-// ============ 页面初始化 ============
+// ============ 页面初始化：加载大分类 + 全量产品列表 ============
 onMounted(async () => {
   try {
-    const [majorTypes] = await Promise.all([
-      configurationTypeApi.getMajorConfigurationTypes()
-    ])
-    configurationTypes.value = majorTypes
+    majorTypes.value = await configurationTypeApi.getMajorConfigurationTypes()
     searchProducts()
   } catch (err: any) {
     showError(err.message || '加载数据失败')
   }
 })
 
-// ============ 分类变化：加载该分类下的业绩对标，清空后续选择，刷新产品列表 ============
-const handleConfigurationTypeChange = async () => {
+// ============ 大分类变化：加载子分类，清空后续所有选择，刷新产品列表 ============
+const handleMajorTypeChange = async () => {
+  selectedSubType.value = undefined
+  selectedBenchmark.value = undefined
+  selectedStrategyType.value = undefined
+  subTypes.value = []
+  benchmarks.value = []
+  strategyTypes.value = []
+  currentPage.value = 1
+  try {
+    if (selectedMajorType.value) {
+      subTypes.value = await configurationTypeApi.getConfigurationTypesByParentId(
+        selectedMajorType.value
+      )
+    }
+    searchProducts()
+  } catch (err: any) {
+    showError(err.message || '加载子分类失败')
+  }
+}
+
+// ============ 子分类变化：加载业绩对标，清空后续选择，刷新产品列表 ============
+const handleSubTypeChange = async () => {
   selectedBenchmark.value = undefined
   selectedStrategyType.value = undefined
   benchmarks.value = []
   strategyTypes.value = []
   currentPage.value = 1
   try {
-    if (selectedConfigurationType.value) {
+    if (selectedSubType.value) {
       benchmarks.value = await benchmarkApi.getBenchmarksByConfigurationTypeId(
-        selectedConfigurationType.value
+        selectedSubType.value
       )
     }
     searchProducts()
@@ -202,7 +233,7 @@ const handleConfigurationTypeChange = async () => {
   }
 }
 
-// ============ 业绩对标变化：加载该业绩对标下的策略类型，清空后续选择，刷新产品列表 ============
+// ============ 业绩对标变化：加载策略类型，清空后续选择，刷新产品列表 ============
 const handleBenchmarkChange = async () => {
   selectedStrategyType.value = undefined
   strategyTypes.value = []
@@ -234,8 +265,10 @@ const searchProducts = async () => {
       page: currentPage.value - 1,
       size: pageSize.value
     }
-    if (selectedConfigurationType.value) {
-      params.configurationTypeId = selectedConfigurationType.value
+    if (selectedSubType.value) {
+      params.configurationTypeId = selectedSubType.value
+    } else if (selectedMajorType.value) {
+      params.configurationTypeId = selectedMajorType.value
     }
     if (selectedBenchmark.value) {
       params.benchmarkId = selectedBenchmark.value
