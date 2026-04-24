@@ -145,7 +145,7 @@ const loadConfigurationTypes = async () => {
   try {
     await configurationTypeStore.loadConfigurationTypes()
   } catch (err: any) {
-    showError(err.message || '加载配置类型失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -170,7 +170,7 @@ const loadBenchmarks = async () => {
   try {
     await benchmarkStore.loadByConfigurationTypeId(selectedSubType.value)
   } catch (err: any) {
-    showError(err.message || '加载业绩对标失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -179,7 +179,7 @@ const loadAllBenchmarks = async () => {
   try {
     await benchmarkStore.loadBenchmarks()
   } catch (err: any) {
-    showError(err.message || '加载业绩对标失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -219,7 +219,7 @@ const handleDelete = async (data: BenchmarkDTO) => {
       await handleRefresh()
       success('删除成功')
     } catch (err: any) {
-      showError(err.message || '删除失败')
+      // 错误消息已由请求拦截器统一弹出
     }
   }
 }
@@ -245,7 +245,7 @@ const handleConfirm = async () => {
     handleRefresh()
     success(isEdit.value ? '更新成功' : '创建成功')
   } catch (err: any) {
-    showError(err.message || isEdit.value ? '更新失败' : '创建失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -277,7 +277,7 @@ const handleMoveUp = async (data: BenchmarkDTO) => {
       await handleRefresh()
       success('排序更新成功')
     } catch (err: any) {
-      showError(err.message || '排序更新失败')
+      // 错误消息已由请求拦截器统一弹出
     }
   }
 }
@@ -293,7 +293,7 @@ const handleMoveDown = async (data: BenchmarkDTO) => {
       await handleRefresh()
       success('排序更新成功')
     } catch (err: any) {
-      showError(err.message || '排序更新失败')
+      // 错误消息已由请求拦截器统一弹出
     }
   }
 }

@@ -35,65 +35,29 @@ request.interceptors.response.use(
   (response: AxiosResponse) => {
     const { code, message, data } = response.data
 
-    // 业务码为200时返回数据，否则提示错误
+    // 业务码为200时返回数据，否则提示错误并静默拒绝（不再重复弹消息）
     if (code === 200) {
       return data
     } else {
-      // 业务错误提示
+      // 统一弹窗提示后端返回的错误消息
       ElMessage.error(message || '请求失败')
-      return Promise.reject(new Error(message || '请求失败'))
+      // reject 一个不带消息的 Error，避免 catch 中重复弹窗
+      return Promise.reject(new Error())
     }
   },
   (error: AxiosError) => {
-    // HTTP状态码错误处理
+    // HTTP状态码错误处理（网络错误、跨域等非业务异常）
     if (error.response) {
       const { status, data } = error.response
-      // 优先使用后端返回的中文错误消息
       const message = data?.message
-
-      // 将后端消息挂到 error 对象上，供调用方 catch 中使用
-      ;(error as any).backendMessage = message
-
-      switch (status) {
-        // 401未授权：提示重新登录
-        case 401:
-          ElMessageBox.confirm('登录状态已过期，请重新登录', '提示', {
-            confirmButtonText: '重新登录',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            localStorage.removeItem('token')
-            window.location.href = '/login'
-          })
-          break
-        // 403禁止访问
-        case 403:
-          ElMessage.error(message || '没有权限访问')
-          break
-        // 404资源不存在
-        case 404:
-          ElMessage.error(message || '请求的资源不存在')
-          break
-        // 409资源冲突
-        case 409:
-          ElMessage.error(message || '资源数据冲突')
-          break
-        // 500服务器内部错误
-        case 500:
-          ElMessage.error(message || '服务器内部错误')
-          break
-        default:
-          ElMessage.error(message || error.message || '请求失败')
-      }
+      ElMessage.error(message || '请求失败')
     } else if (error.request) {
-      // 请求已发出但未收到响应
       ElMessage.error('网络错误，请检查网络连接')
     } else {
-      // 请求配置异常
       ElMessage.error('请求配置错误')
     }
 
-    return Promise.reject(error)
+    return Promise.reject(new Error())
   }
 )
 
