@@ -51,6 +51,9 @@ request.interceptors.response.use(
       // 优先使用后端返回的中文错误消息
       const message = data?.message
 
+      // 将后端消息挂到 error 对象上，供调用方 catch 中使用
+      ;(error as any).backendMessage = message
+
       switch (status) {
         // 401未授权：提示重新登录
         case 401:

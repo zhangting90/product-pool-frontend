@@ -189,7 +189,7 @@ onMounted(async () => {
     majorTypes.value = await configurationTypeApi.getMajorConfigurationTypes()
     searchProducts()
   } catch (err: any) {
-    showError(err.message || '加载数据失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 })
 
@@ -210,7 +210,7 @@ const handleMajorTypeChange = async () => {
     }
     searchProducts()
   } catch (err: any) {
-    showError(err.message || '加载子分类失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -229,7 +229,7 @@ const handleSubTypeChange = async () => {
     }
     searchProducts()
   } catch (err: any) {
-    showError(err.message || '加载业绩对标失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -246,7 +246,7 @@ const handleBenchmarkChange = async () => {
     }
     searchProducts()
   } catch (err: any) {
-    showError(err.message || '加载策略类型失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -278,7 +278,7 @@ const searchProducts = async () => {
     }
     await productStore.searchProducts(params)
   } catch (err: any) {
-    showError(err.message || '搜索产品失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -330,7 +330,7 @@ const handleDelete = async (data: ProductDTO) => {
       await handleRefresh()
       success('删除成功')
     } catch (err: any) {
-      showError(err.message || '删除失败')
+      // 错误消息已由请求拦截器统一弹出
     }
   }
 }
@@ -357,7 +357,7 @@ const handleConfirm = async () => {
     handleRefresh()
     success(isEdit.value ? '更新成功' : '创建成功')
   } catch (err: any) {
-    showError(err.message || isEdit.value ? '更新失败' : '创建失败')
+    // 错误消息已由请求拦截器统一弹出
   }
 }
 
@@ -387,7 +387,7 @@ const handleMoveUp = async (data: ProductDTO) => {
       await handleRefresh()
       success('排序更新成功')
     } catch (err: any) {
-      showError(err.message || '排序更新失败')
+      // 错误消息已由请求拦截器统一弹出
     }
   }
 }
@@ -402,7 +402,7 @@ const handleMoveDown = async (data: ProductDTO) => {
       await handleRefresh()
       success('排序更新成功')
     } catch (err: any) {
-      showError(err.message || '排序更新失败')
+      // 错误消息已由请求拦截器统一弹出
     }
   }
 }
