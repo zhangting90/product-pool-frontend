@@ -24,15 +24,16 @@ export const getProducts = (params: {
 }
 
 /**
- * 搜索产品（分页）
+ * 搜索产品（分页），支持分类、业绩对标、策略类型多级筛选
  * @param params - 搜索条件和分页参数
  * @returns 分页产品列表
  */
 export const searchProducts = (params: {
   name?: string
   code?: string
-  strategyTypeId?: string
-  strategyTypeIds?: number[]
+  configurationTypeId?: number
+  benchmarkId?: number
+  strategyTypeId?: number
   page?: number
   size?: number
 }) => {

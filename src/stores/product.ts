@@ -61,8 +61,9 @@ export const useProductStore = defineStore('product', () => {
   const searchProducts = async (params: {
     name?: string
     code?: string
-    strategyTypeId?: string
-    strategyTypeIds?: number[]
+    configurationTypeId?: number
+    benchmarkId?: number
+    strategyTypeId?: number
     page?: number
     size?: number
   }) => {
